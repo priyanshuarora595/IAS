@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load myfilters %}
+{% block head %}
+
+<!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+<link href="{% static 'css/bootstrap_4.min.css' %}" rel="stylesheet" id="bootstrap-css">
+<script src="{% static 'js/bootstrap_4.min.js' %} "></script>
+<script src="{% static 'js/jquery_3_2_1.min.js' %} "></script>
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'login/login.css' %}">
+
+{% endblock head %}
+
+{% block body %}
+
+    <div id="login-row" class="row justify-content-center align-items-center">
+        <div id="login-column" class="col-md-6">
+            <div class="box">
+                <div class="shape1"></div>
+                <div class="shape2"></div>
+                <div class="shape3"></div>
+                <div class="shape4"></div>
+                <div class="shape5"></div>
+                <div class="shape6"></div>
+                <div class="shape7"></div>
+                <div class="float">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {% for field in login_form %}
+                        <div class="form-group">
+                            {{ field.errors }}
+                            {{ field.label }} {{ field }}
+                        </div>
+						{% endfor %}                    
+        
+                        <button class="btn btn-success" type="submit">Login</button>
+                      </form>
+                        <div class="form-group">
+                            <br><h5>Don't have account ??</h5><br>
+                            <a href="{% url 'signup'%}" ><button class="btn btn-info btn-md" >Register</button></a>
+                            <a href="reset_password/" ><button class="btn btn-info btn-md" >Forgot Password</button></a>
+                        </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}

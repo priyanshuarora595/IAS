@@ -1,0 +1,9 @@
+<form action="scan_barcode" method="post" id="scan_barcode_form">
+    {% csrf_token %}
+    <div class="form-group">
+        <div class="mb-3">
+            <label for="formFile" class="form-label">Scan Barcode</label>
+            <input class="form-control" type="text" id="mybarcode" name="mybarcode" autofocus>
+        </div>
+    </div>
+</form>

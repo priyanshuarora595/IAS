@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+{% load djmoney %}
+{% load mathfilters %}
+{% load index %}
+{% load endswith %}
+{% load static %}
+
+
+{% block body %}
+<!-- <button type="submit" style="margin-left:10%;" onclick="del_items()">Delete</button> -->
+<button type="button" style="margin-left:10%;" class="btn btn-primary" onclick="del_items()">
+  Delete
+</button>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#UploadFileModal">
+  import 
+</button>
+<a href="export"><button type="button" class="btn btn-primary text-white">
+  Export 
+</button>
+</a>
+
+<button type="button" class="btn btn-primary" onclick="multi_print()">
+  Print
+</button>
+
+
+<!-- Modal -->
+<div class="modal fade" id="UploadFileModal" tabindex="-1" role="dialog" aria-labelledby="UploadFileLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="UploadFileLabel">Import Data</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {% include 'import.html' %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="import_data()">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- <button type="submit" style="margin-left:10%;" onclick="printDiv()">print</button> -->
+<div class="container" style="overflow:auto; margin-left:auto;margin-right:auto  ;margin-top:3%;">
+  <table class="table table-bordered">
+      <thead>
+          <tr>
+              <th class="table-head table-data"
+                  style="text-align:center ;padding: 8px;border: 1px solid #dddddd;">
+                  S.No.
+              </th>
+              {% for key in columns %}
+                  <th class="table-head table-data"
+                      style="text-align:center ;padding: 8px;border: 1px solid #dddddd;">
+                      {{key.verbose_name}}
+                  </th>
+                  {% endfor %}
+                  
+                <th class="table-head table-data"
+                    style="text-align:center ;padding: 8px;border: 1px solid #dddddd;">
+                    Delete
+                    <i id="delete-all-icon" class="fas fa-trash"></i>
+                    <input type="checkbox" name="select-all-delete" id="select-all-delete" />
+                </th>
+                <th class="table-head table-data"
+                    style="text-align:center ;padding: 8px;border: 1px solid #dddddd;">
+                    Print
+                    {% comment %} <i id="delete-all-icon" class="fas fa-trash"></i> {% endcomment %}
+                    <input type="checkbox" name="select-all-print" id="select-all-print" />
+                </th>
+                <th class="table-head table-data"
+                    style="text-align:center ;padding: 8px;border: 1px solid #dddddd;">
+                    Edit
+                </th>
+
+          </tr>
+
+      </thead>
+
+      <tbody>
+
+          {% for user_data in all_data %}
+          <tr>
+              <td>
+                  <center>{{forloop.counter}}</center>
+              </td>
+
+              {% for x,v in user_data.items %}
+                  {% if x %}
+                      {% if forloop.counter|isequal:7 or forloop.counter|isequal:9 %}
+                        <td>
+                          <center>{{"INR"|curr}} {{v}}</center>
+                        </td>
+
+                        {% elif forloop.counter|isequal:11 %}
+                        <td>
+                          <div id="{{v}}">
+                          <img src="{% get_media_prefix %}{{v}}"  height="100px">
+                          </div>
+                        </td>
+                      {% else %}
+                        <td>
+                        <center>{{v}}</center>
+                        </td>
+                      {% endif %}
+                  {% else %}
+                    <td>
+                    <center>Not set yet</center>
+                    </td>
+                  {% endif %}
+              
+              {% endfor %}
+              <td tyle="text-align:center ;padding: 16px;border: 1px solid #dddddd;"><input type="checkbox"
+                name="delete_item" id="{{user_data.id}}" value="{{user_data.id}}" ></td>
+              <td tyle="text-align:center ;padding: 16px;border: 1px solid #dddddd;">
+                <input type="checkbox" name="print_item" id="print_{{user_data.id}}" value="{{user_data.barcode}}" >
+                <button type="button" style="margin-left:10%;" onclick="printDiv('{{user_data.barcode}}')">print</button>
+              </td>
+              <td>
+                <a href="" class="nav-link px-2 text-black" data-toggle="modal" data-target="#EditEntryModal" onclick="modalpopup('{{user_data.id}}')" >Edit Entry</a>
+              </td>
+              
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+  <form action="del_item" id="del_form" method="post" hidden>
+    {% csrf_token %}
+  </form>
+</div>
+
+<!-- EDIT Modal -->
+<div class="modal fade" id="EditEntryModal" tabindex="-1" role="dialog" aria-labelledby="EditEntryModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="EditEntryModalLabel">Edit Entry</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body EditEntryModalBody" id="EditEntryModalBody">
+        {% include 'EditEntry_page.html' %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="update_entry()">Save changes</button>
+      </div>
+    </div>
+</div>
+</div>
+
+<script>
+
+  $('#select-all-delete').click(function (event) {
+      if (this.checked) {
+          // Iterate each checkbox
+          jQuery("input[name='delete_item']").each(function () {
+              this.checked = true;
+          });
+      } else {
+        jQuery("input[name='delete_item']").each(function () {
+              this.checked = false;
+          });
+      }
+  });
+  $('#select-all-print').click(function (event) {
+      if (this.checked) {
+          // Iterate each checkbox
+          jQuery("input[name='print_item']").each(function () {
+              this.checked = true;
+          });
+      } else {
+        jQuery("input[name='print_item']").each(function () {
+              this.checked = false;
+          });
+      }
+  });
+  var del_item_list = new Set();
+  var print_item_list = new Set();
+
+
+  function del_items()
+  {
+    var markedCheckbox = document.getElementsByName('delete_item');
+    for (var checkbox of markedCheckbox) {  
+      if (checkbox.checked)  
+        del_item_list.add(checkbox.value);  
+      else
+        del_item_list.delete(checkbox.value)
+    }
+    var del_form = document.getElementById("del_form");
+    const hiddenField = document.createElement('input')
+    hiddenField.type = 'hidden';
+    hiddenField.name = 'delete_item_list';
+    hiddenField.value = Array.from(del_item_list);
+    del_form.appendChild(hiddenField);
+    del_form.submit();
+  }
+
+  function multi_print()
+  {
+    var markedCheckbox_print = document.getElementsByName('print_item');
+    for (var checkbox of markedCheckbox_print) {  
+      if (checkbox.checked)  
+        print_item_list.add(checkbox.value);  
+      else
+        print_item_list.delete(checkbox.value);
+    }
+
+    console.log(print_item_list);
+    var a = window.open('', '', 'height=500, width=500');
+    a.document.write('<html>');
+    a.document.write('<body >');
+      for(var item of print_item_list)
+      {
+        console.log(item);
+        var div_contents = document.getElementById(item).innerHTML;
+        a.document.write(div_contents)
+      }
+
+      for(var image_item of a.document.images)
+      {
+        image_item.style.height = "190px";
+        image_item.style.width = "270px";
+      }
+    a.document.write('</body></html>');
+    a.document.close();
+    a.print();
+  }
+
+  function update_entry(){
+    var update_form = document.getElementById("EditEntryForm");
+    update_form.submit();
+  }
+
+  function import_data(){
+    var import_form = document.getElementById("import_form");
+    import_form.submit();
+  }
+
+
+  function printDiv(elem_id) {
+    console.log(elem_id);
+    var divContents = document.getElementById(elem_id).innerHTML;
+    var a = window.open('', '', 'height=500, width=500');
+    a.document.write('<html>');
+    a.document.write('<body >');
+    a.document.write(divContents);
+    a.document.write('</body></html>');
+    a.document.close();
+    a.print();
+}
+
+
+function modalpopup(id){
+  
+  console.log("modal popup");
+  console.log(id);
+  req_url="edit_entry/"+String(id);
+  console.log(req_url);
+  $('#EditEntryModalBody').load(req_url);
+}
+
+</script>
+{% endblock body %}

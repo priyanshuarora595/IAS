@@ -1,0 +1,14 @@
+.box {
+    width: 500px;
+    margin: 200px 0;
+}
+
+
+.float {
+    position: absolute;
+    z-index: 2;
+}
+
+.form {
+    margin-left: 145px;
+}

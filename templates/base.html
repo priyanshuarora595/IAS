@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="{% static 'css/bootstrap_5.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min_4_5.css' %}">
+    <script src="{% static 'js/jquery-3.2.1.slim.min.js' %}"></script>
+    <script src="{% static 'js/pooper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery-3.5.1.min.js' %}"></script>
+    
+    <script src="{% static 'js/bootstrap.min_4_5.js' %}"></script>
+    
+    <style>
+      .card {
+        margin-top: 2% 2% 2% 2%;
+        min-width: 30%;
+        padding: 2%;
+      }
+    </style>
+    <script>
+      $(document).ready(function(){
+        $("#ScanBarcodeModal").on('shown.bs.modal', function(){
+            $(this).find('input[type="text"]').focus();
+        });
+    });
+    </script>
+    {% block title %} <title> IAS </title>{% endblock title %}
+    {% block head %} {% endblock head %}
+  </head>
+  <header class="p-3 bg-dark text-white">
+    <div class="container-fluid">
+      <div
+        class="
+          d-flex
+          flex-wrap
+          align-items-center
+          justify-content-center justify-content-lg-start
+        "
+      >
+        <ul
+          class="
+            nav
+            col-12 col-lg-auto
+            me-lg-auto
+            mb-2
+            justify-content-center
+            mb-md-0
+          "
+        >
+          <li><a href="/index" class="nav-link px-2 text-white">Home</a></li>
+          <li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#NewEntryModal">Add New Entry</a></li>
+          <li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#ScanBarcodeModal">Scan item</a></li>
+          <!-- <li class="nav-link px-2 text-white">Stuck Anywhere? Goto Home</li> -->
+        </ul>
+        {% if user.is_authenticated %}
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Welcome {{request.user}}</button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="" data-toggle="modal" data-target="#DeleteAccount">Delete Profile</a>
+            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+            {% comment %} <a class="dropdown-item" href="url 'change_user_password'">Logout</a> {% endcomment %}
+            {% comment %} <a class="dropdown-item" href="{% url 'user_profile' user %}">Dashboard</a> {% endcomment %}
+          </div>
+        </div>
+        {% else %}
+        <div class="text-end">
+          <button type="button" onclick="redirect_login()" class="btn btn-outline-light me-2" id="login">Login</button>
+          <button type="button" onclick="redirect_signup()" class="btn btn-warning" id="signup">Sign-up</button>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    <strong>Message: </strong>{{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {% endfor %}
+
+  <script>
+    function redirect_signup() {
+      document.location.href ="{% url 'signup'%}";
+};
+    function redirect_login() {
+      document.location.href ="{% url 'login'%}";
+};
+    function redirect_del_user() {
+      document.location.href ="del_user";
+};
+  </script>
+
+  <body>
+      <!-- Scan Modal -->
+<div class="modal fade" id="ScanBarcodeModal" tabindex="-1" role="dialog" aria-labelledby="ScanBarcodeModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ScanBarcodeModalLabel">Scan Barcode</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body ScanBarcodeModalBody" id="ScanBarcodeModalBody">
+        {% include 'scan_barcode.html' %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="ScanBarcode()">Search</button>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    <!-- Modal -->
+  <div class="modal fade" id="DeleteAccount" tabindex="-1" role="dialog" aria-labelledby="Delete Account"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Delete Account</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure to delete the account ? This action is irreversible and all your data will be permanently
+          deleted. Proceed with caution!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="redirect_del_user()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="NewEntryModal" tabindex="-1" role="dialog" aria-labelledby="NewEntryModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="NewEntryModalLabel">Add New Entry</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <form action="add_item" method="post" id="NewEntryForm" novalidate>
+              {% csrf_token %}
+              {% include 'New_entry.html' with form=NewEntryForm %}
+          </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="SubmitForm()">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  
+
+  function SubmitForm()
+  {
+      document.getElementById("NewEntryForm").submit();
+  }
+
+  function ScanBarcode(){
+    document.getElementById("scan_barcode_form").submit();
+  }
+
+</script>
+{% block body %} {% endblock body%}
+  </body>
+
+
+</html>

@@ -1,0 +1,9 @@
+<form action="simple_upload" method="post" enctype="multipart/form-data" id="import_form">
+    {% csrf_token %}
+    <div class="form-group">
+        <div class="mb-3">
+            <label for="formFile" class="form-label">Upload XLSX files to import</label>
+            <input class="form-control" type="file" id="myfile" name="myfile">
+        </div>
+    </div>
+</form>
