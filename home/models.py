@@ -14,7 +14,7 @@ from IAS_Project.settings import STATIC_URL
 
 # Create your models here.
 class Items(models.Model):
-    Product_sr_no = models.CharField(verbose_name="Product Serial Number",max_length=30,blank=False)
+    Product_sr_no = models.CharField(verbose_name="Product Serial Number",max_length=30,blank=False,unique=True)
     item_name = models.CharField(verbose_name="Item Name",max_length=200,blank=False)
     year_of_purchase = models.DateField(verbose_name="Year of Purchase",blank=False)
     fund_name = models.CharField(verbose_name="Fund Name",max_length=200,blank=False)

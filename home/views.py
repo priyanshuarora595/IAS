@@ -1,6 +1,7 @@
 
 from asyncio.windows_events import NULL
 from sqlite3 import Cursor
+from sre_parse import ESCAPES
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -32,16 +33,16 @@ def index(request):
 def add_item(request):
     if request.user.is_authenticated:
         if request.method=="POST":
-            form = ItemsForm(request.POST)
-            # print(form)
-            try:
-                # print(request.POST)
-                # Items.save_overwrite(request.POST)
-                form.save()
-                messages.success(request,"New item added successfully!")
-            except Exception as e:
-                print(e)
-                messages.error(request,"Error occurred. Data Entry Failed!")
+            print(request.POST['Product_sr_no'])
+            if request.POST['Product_sr_no'] not in Items.objects.values_list('Product_sr_no',flat=True):
+                form = ItemsForm(request.POST)
+                try:
+                    form.save()
+                    messages.success(request,"New item added successfully!")
+                except Exception as e:
+                    messages.error(request,e)
+            else:
+                messages.error(request,"Duplicate entry {}".format(request.POST['Product_sr_no']))
     return redirect('index')
 
 
@@ -132,10 +133,18 @@ def edit_entry_submit(request):
     
     
 def simple_upload(request):
+    flag=0
     if request.method =="POST":
         item_resource = ItemResources()
         dataset = Dataset()
-        new_item = request.FILES['myfile']
+        
+        try:
+            new_item = request.FILES['myfile']
+            
+        except :
+            e="NO file selected!"
+            messages.error(request,e)
+            return render(request,'all_entries')
         
         if not new_item.name.endswith('xlsx'):
             messages.info(request,'Wrong format !! We support only xlsx files.')
@@ -148,9 +157,20 @@ def simple_upload(request):
             table_cols.remove('barcode')
             data_dict = {k:v for k,v in zip(table_cols,data)}
             value = Items(**data_dict)
-            value.save()
-        
-        messages.success(request,"data import successful")
+            try:
+                if data_dict['Product_sr_no'] not in Items.objects.values_list('Product_sr_no',flat=True):
+                    value.save()
+                else:
+                    if flag==0:
+                        messages.error(request,"Duplicate entry {}".format(data_dict['Product_sr_no']))
+                        flag=1
+            except Exception as e:
+                if flag==0:
+                    messages.error(request,e)
+                    flag=1
+                continue
+        if flag==0:
+            messages.success(request,"data import successful")
     return redirect('all_entries')
 
             

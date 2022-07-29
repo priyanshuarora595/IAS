@@ -1,11 +1,8 @@
 
 from django import forms
 from .models import Items
-from barcode import EAN13
-import barcode
-from barcode.writer import ImageWriter
-from io import BytesIO
-from django.core.files import File
+
+
 
 
 class DateInput(forms.DateInput):

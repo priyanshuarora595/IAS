@@ -7,46 +7,23 @@
 
 
 {% block body %}
-<!-- <button type="submit" style="margin-left:10%;" onclick="del_items()">Delete</button> -->
-<button type="button" style="margin-left:10%;" class="btn btn-primary" onclick="del_items()">
+
+<div class="head_buttons" style="margin-top: 10px ;">
+<button type="button" style="margin-left:10%;" data-toggle="modal" data-target="#DeleteItemModal" class="btn btn-primary">
   Delete
 </button>
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#UploadFileModal">
   import 
 </button>
-<a href="export"><button type="button" class="btn btn-primary text-white">
-  Export 
+<button type="button" class="btn btn-primary text-white"><a href="export" class="text-white" style="text-decoration: none;">
+  Export </a>
 </button>
-</a>
-
 <button type="button" class="btn btn-primary" onclick="multi_print()">
   Print
 </button>
-
-
-<!-- Modal -->
-<div class="modal fade" id="UploadFileModal" tabindex="-1" role="dialog" aria-labelledby="UploadFileLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="UploadFileLabel">Import Data</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        {% include 'import.html' %}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" onclick="import_data()">Save changes</button>
-      </div>
-    </div>
-  </div>
 </div>
 
 
-<!-- <button type="submit" style="margin-left:10%;" onclick="printDiv()">print</button> -->
 <div class="container" style="overflow:auto; margin-left:auto;margin-right:auto  ;margin-top:3%;">
   <table class="table table-bordered">
       <thead>
@@ -70,13 +47,14 @@
                 </th>
                 <th class="table-head table-data"
                     style="text-align:center ;padding: 8px;border: 1px solid #dddddd;">
-                    Print
+                    Print <i class="fa fa-print"></i>
                     {% comment %} <i id="delete-all-icon" class="fas fa-trash"></i> {% endcomment %}
                     <input type="checkbox" name="select-all-print" id="select-all-print" />
                 </th>
                 <th class="table-head table-data"
                     style="text-align:center ;padding: 8px;border: 1px solid #dddddd;">
                     Edit
+                    
                 </th>
 
           </tr>
@@ -95,7 +73,7 @@
                   {% if x %}
                       {% if forloop.counter|isequal:7 or forloop.counter|isequal:9 %}
                         <td>
-                          <center>{{"INR"|curr}} {{v}}</center>
+                          <center>{{"INR"|curr}}{{v}}</center>
                         </td>
 
                         {% elif forloop.counter|isequal:11 %}
@@ -120,10 +98,10 @@
                 name="delete_item" id="{{user_data.id}}" value="{{user_data.id}}" ></td>
               <td tyle="text-align:center ;padding: 16px;border: 1px solid #dddddd;">
                 <input type="checkbox" name="print_item" id="print_{{user_data.id}}" value="{{user_data.barcode}}" >
-                <button type="button" style="margin-left:10%;" onclick="printDiv('{{user_data.barcode}}')">print</button>
+                <i class="fa fa-print" onclick="printDiv('{{user_data.barcode}}')"></i>
               </td>
               <td>
-                <a href="" class="nav-link px-2 text-black" data-toggle="modal" data-target="#EditEntryModal" onclick="modalpopup('{{user_data.id}}')" >Edit Entry</a>
+                <a href="" class="nav-link px-2 text-black" data-toggle="modal" data-target="#EditEntryModal" onclick="modalpopup('{{user_data.id}}')" ><i class="fas fa-edit"></i></a>
               </td>
               
           </tr>
@@ -134,6 +112,29 @@
     {% csrf_token %}
   </form>
 </div>
+
+    <!-- Delete Item Modal -->
+    <div class="modal fade" id="DeleteItemModal" tabindex="-1" role="dialog" aria-labelledby="DeleteItemModal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="DeleteItemTitle">Delete Item</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure to delete the item? This action is irreversible. Your data will be lost and will not be recovered if you have not taken backup (export) Proceed with caution!</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="del_items()">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
 <!-- EDIT Modal -->
 <div class="modal fade" id="EditEntryModal" tabindex="-1" role="dialog" aria-labelledby="EditEntryModalLabel" aria-hidden="true">
@@ -186,6 +187,8 @@
   var print_item_list = new Set();
 
 
+
+  
   function del_items()
   {
     var markedCheckbox = document.getElementsByName('delete_item');
@@ -214,13 +217,12 @@
         print_item_list.delete(checkbox.value);
     }
 
-    console.log(print_item_list);
     var a = window.open('', '', 'height=500, width=500');
     a.document.write('<html>');
     a.document.write('<body >');
       for(var item of print_item_list)
       {
-        console.log(item);
+    
         var div_contents = document.getElementById(item).innerHTML;
         a.document.write(div_contents)
       }
@@ -240,19 +242,21 @@
     update_form.submit();
   }
 
-  function import_data(){
-    var import_form = document.getElementById("import_form");
-    import_form.submit();
-  }
+  
 
 
   function printDiv(elem_id) {
-    console.log(elem_id);
+   
     var divContents = document.getElementById(elem_id).innerHTML;
     var a = window.open('', '', 'height=500, width=500');
     a.document.write('<html>');
     a.document.write('<body >');
     a.document.write(divContents);
+    for(var image_item of a.document.images)
+      {
+        image_item.style.height = "190px";
+        image_item.style.width = "270px";
+      }
     a.document.write('</body></html>');
     a.document.close();
     a.print();
@@ -260,11 +264,7 @@
 
 
 function modalpopup(id){
-  
-  console.log("modal popup");
-  console.log(id);
   req_url="edit_entry/"+String(id);
-  console.log(req_url);
   $('#EditEntryModalBody').load(req_url);
 }
 
