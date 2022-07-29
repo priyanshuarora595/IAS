@@ -4,3 +4,4 @@ from .models import Items
 class ItemResources(resources.ModelResource):
     class Meta:
         model = Items
+        

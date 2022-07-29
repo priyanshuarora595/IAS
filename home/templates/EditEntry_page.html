@@ -20,7 +20,7 @@
 {% endif %}
 
 {% for field in form.visible_fields %}
-  <div class="form-group">
+<div class="form-group">
     {{ field.label_tag }}
 
     {% if form.is_bound %}
@@ -43,4 +43,8 @@
     {% endif %}
   </div>
 {% endfor %}
+<div class="form-group">
+  <label for="id_del_pass">Password</label>
+    <input type="password" name="del_pass" value="" maxlength="100" class="form-control"  id="del_pass">
+</div>
 </form>

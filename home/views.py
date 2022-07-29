@@ -1,7 +1,4 @@
-
-from asyncio.windows_events import NULL
-from sqlite3 import Cursor
-from sre_parse import ESCAPES
+from django.contrib.auth.hashers import check_password
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -16,6 +13,7 @@ from pathlib import Path
 import os
 import pandas as pd
 from io import BytesIO as IO
+import xlrd
 
 
 def index(request):
@@ -75,23 +73,29 @@ def all_entries(request):
 
 def del_item(request):
     if request.user.is_authenticated:
-        item_ids= request.POST.getlist("delete_item_list")
-        item_ids = item_ids[0].split(",")
-        try:
-            for item in item_ids:
-                # print(item)
-                item_obj = Items.objects.get(id=item)
-                barcode_img_path = Path(str(MEDIA_ROOT)+str(item_obj.barcode))
-                os.remove(barcode_img_path)
-                item_obj.delete()
-            messages.success(request,"Item deleted successfully!")
-        except Exception as e:
-            if str(e)=="Field 'id' expected a number but got ''.":
-                er = "select atleast one item to delete"
-                messages.error(request,er)
-            else:
-                messages.error(request,e)
-        
+        passw=request.POST.get('del_pass')
+        print(request.POST)
+        print(passw)
+        res=check_password(passw,request.user.password)
+        if res:
+            item_ids= request.POST.getlist("delete_item_list")
+            item_ids = item_ids[0].split(",")
+            try:
+                for item in item_ids:
+                    # print(item)
+                    item_obj = Items.objects.get(id=item)
+                    barcode_img_path = Path(str(MEDIA_ROOT)+str(item_obj.barcode))
+                    os.remove(barcode_img_path)
+                    item_obj.delete()
+                messages.success(request,"Item deleted successfully!")
+            except Exception as e:
+                if str(e)=="Field 'id' expected a number but got ''.":
+                    er = "select atleast one item to delete"
+                    messages.error(request,er)
+                else:
+                    messages.error(request,e)
+        else:
+            messages.error(request,"Unauthorised!")    
         return redirect('all_entries')
     return redirect('index')
 
@@ -113,21 +117,25 @@ def edit_entry(request,it_id):
     
 def edit_entry_submit(request):
     if request.method=="POST":
-        it_id = request.POST['item_id']
-        print(it_id);
-        item_obj = Items.objects.get(id=int(it_id))
-        updated_data = dict(request.POST)
-        del updated_data['csrfmiddlewaretoken']
-        del updated_data['item_id']
-        for k,v in updated_data.items():
-            setattr(item_obj,k,v[0])
-        # print("form ========================================== \n")
-        try:
-            item_obj.save_overwrite()  
-            messages.success(request,"Item updated successfully!")
-            
-        except Exception as e:
-            messages.error(request,e)
+        passw=request.POST['del_pass']
+        res=check_password(passw,request.user.password)
+        if res:
+            it_id = request.POST['item_id']
+            item_obj = Items.objects.get(id=int(it_id))
+            updated_data = dict(request.POST)
+            del updated_data['csrfmiddlewaretoken']
+            del updated_data['item_id']
+            for k,v in updated_data.items():
+                setattr(item_obj,k,v[0])
+            # print("form ========================================== \n")
+            try:
+                item_obj.save_overwrite()  
+                messages.success(request,"Item updated successfully!")
+                
+            except Exception as e:
+                messages.error(request,e)
+        else:
+            messages.error(request,"Unauthorised!")    
         
         return redirect('all_entries')
     
@@ -135,23 +143,35 @@ def edit_entry_submit(request):
 def simple_upload(request):
     flag=0
     if request.method =="POST":
-        item_resource = ItemResources()
         dataset = Dataset()
         
         try:
             new_item = request.FILES['myfile']
+            print(type(new_item))
             
         except :
             e="NO file selected!"
             messages.error(request,e)
             return render(request,'all_entries')
         
-        if not new_item.name.endswith('xlsx'):
-            messages.info(request,'Wrong format !! We support only xlsx files.')
+            
+        if new_item.name.endswith('xlsx'):
+            imported_data = dataset.load(new_item.read(),format='xlsx')
+        elif new_item.name.endswith('xls'):
+            imported_data = dataset.load(new_item.read(),format='xls')
+            imported_data = imported_data.xls
+        elif new_item.name.endswith('csv'):
+            imported_data = dataset.load(new_item.read(),format='xlsx')
+            imported_data = imported_data.csv
+            
+            # imported_data = dataset.load(file.read(),format='csv')
+        else:
+            messages.info(request,'Wrong format !! We support only xlsx ,xls and csv files.')
             return redirect('all_entries')
         
-        imported_data = dataset.load(new_item.read(),format='xlsx')
+        print(imported_data)
         for data in imported_data:
+            print(data)
             table_cols = [f.name for f in Items._meta.get_fields()]
             table_cols.remove('id')
             table_cols.remove('barcode')
@@ -173,13 +193,22 @@ def simple_upload(request):
             messages.success(request,"data import successful")
     return redirect('all_entries')
 
+
+
+
+def add_media_path(x):
+    x=str(x)
+    x=str(MEDIA_ROOT)+"\\"+x
+    x=Path(x)
+    return x
+    
             
-            
-def export(request):
+def export_xlsx(request):
     dataset = ItemResources().export()
-    # print(type(dataset))
     df_output = dataset.export('df')
-    # print(type(df_output))
+    
+    df_output = df_output.drop(columns=['id'],axis=1)
+    df_output['barcode'] = df_output['barcode'].apply(add_media_path)
     excel_file = IO()
     xlwriter = pd.ExcelWriter(excel_file, engine='xlsxwriter')
 
@@ -196,6 +225,18 @@ def export(request):
 
     return response
 
+
+
+def export_csv(request):
+    dataset = ItemResources().export()
+    df = dataset.export('df')
+    df_output = df_output.drop(columns=['id'],axis=1)
+    df_output['barcode'] = df_output['barcode'].apply(add_media_path)
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=filename.csv'
+
+    df_output.to_csv(path_or_buf=response,sep=';',float_format='%.2f',index=False,decimal=",")
+    return response
 
 def scan_barcode(request):
     if request.user.is_authenticated:

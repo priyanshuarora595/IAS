@@ -9,18 +9,36 @@
 {% block body %}
 
 <div class="head_buttons" style="margin-top: 10px ;">
-<button type="button" style="margin-left:10%;" data-toggle="modal" data-target="#DeleteItemModal" class="btn btn-primary">
-  Delete
+
+  <button type="button" style="margin-left:10%;" data-toggle="modal" data-target="#DeleteItemModal" class="btn btn-primary">
+    Delete
+  </button>
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#UploadFileModal">
+    import 
+  </button>
+
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="ExportdropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Export</button>
+    <div class="dropdown-menu" aria-labelledby="ExportdropdownMenuButton">
+      <a href="export_xlsx" class="dropdown-item" style="text-decoration: none;">
+        Export Excel </a>
+        <a href="export_csv" class="dropdown-item" style="text-decoration: none;">
+          Export CSV</a>
+    </div>
+
+</div>
+
+
+
+<!-- <button type="button" class="btn btn-primary text-white"><a href="export_xlsx" class="text-white" style="text-decoration: none;">
+  Export Excel </a>
 </button>
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#UploadFileModal">
-  import 
-</button>
-<button type="button" class="btn btn-primary text-white"><a href="export" class="text-white" style="text-decoration: none;">
-  Export </a>
-</button>
-<button type="button" class="btn btn-primary" onclick="multi_print()">
+
+<button type="button" class="btn btn-primary text-white"><a href="export_csv" class="text-white" style="text-decoration: none;">
+  Export CSV</a>
+</button> -->
+<!-- <button type="button" class="btn btn-primary" onclick="multi_print()">
   Print
-</button>
+</button> -->
 </div>
 
 
@@ -43,19 +61,20 @@
                     style="text-align:center ;padding: 8px;border: 1px solid #dddddd;">
                     Delete
                     <i id="delete-all-icon" class="fas fa-trash"></i>
-                    <input type="checkbox" name="select-all-delete" id="select-all-delete" />
+                    <!-- <input type="checkbox" name="select-all-delete" id="select-all-delete" /> -->
                 </th>
                 <th class="table-head table-data"
                     style="text-align:center ;padding: 8px;border: 1px solid #dddddd;">
-                    Print <i class="fa fa-print"></i>
+                    Print <a href=""><i class="fa fa-print" onclick="multi_print()"></i></a>
                     {% comment %} <i id="delete-all-icon" class="fas fa-trash"></i> {% endcomment %}
                     <input type="checkbox" name="select-all-print" id="select-all-print" />
                 </th>
+                {% if user.is_superuser %}
                 <th class="table-head table-data"
                     style="text-align:center ;padding: 8px;border: 1px solid #dddddd;">
-                    Edit
-                    
+                    Update
                 </th>
+                {% endif %}
 
           </tr>
 
@@ -100,17 +119,17 @@
                 <input type="checkbox" name="print_item" id="print_{{user_data.id}}" value="{{user_data.barcode}}" >
                 <i class="fa fa-print" onclick="printDiv('{{user_data.barcode}}')"></i>
               </td>
+              {% if user.is_superuser %}
               <td>
                 <a href="" class="nav-link px-2 text-black" data-toggle="modal" data-target="#EditEntryModal" onclick="modalpopup('{{user_data.id}}')" ><i class="fas fa-edit"></i></a>
               </td>
+              {% endif %}
               
           </tr>
           {% endfor %}
       </tbody>
   </table>
-  <form action="del_item" id="del_form" method="post" hidden>
-    {% csrf_token %}
-  </form>
+  
 </div>
 
     <!-- Delete Item Modal -->
@@ -125,7 +144,14 @@
           </button>
         </div>
         <div class="modal-body">
-          <p>Are you sure to delete the item? This action is irreversible. Your data will be lost and will not be recovered if you have not taken backup (export) Proceed with caution!</p>
+          <form action="del_item" id="del_form" method="post">
+            {% csrf_token %}  
+            <div class="form-group">
+              <p>Are you sure to delete the item? This action is irreversible. Your data will be lost and will not be recovered if you have not taken backup (export) Proceed with caution!</p>
+              <label for="exampleFormControlInput1">Password</label>
+              <input type="password" class="form-control" id="del_pass" placeholder="Enter your paswords">
+            </div>
+          </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
