@@ -1,6 +1,6 @@
 
 from django import forms
-from .models import Items
+from .models import Items , Funds
 
 
 
@@ -11,17 +11,18 @@ class DateInput(forms.DateInput):
     
 class ItemsForm(forms.ModelForm):
     
-    # def save_overwrite(self, *args, **kwargs):          # overriding save() 
-    #     COD128 = barcode.get_barcode_class('code128')
-    #     rv = BytesIO()
-    #     name = str(30)+str(self['fund_name'])[0:2]+str(self.year_of_purchase.strftime('%Y'))+str(self.item_name)[0:2]
-    #     code = COD128(name.upper(), writer=ImageWriter()).write(rv)
-    #     self.barcode.save(f'{name}.png', File(rv), save=False)
-    #     return super().save(*args, **kwargs)
     
     class Meta:
         model = Items
         exclude = ['barcode']
         widgets = {
             'year_of_purchase': DateInput(),
+        }
+        
+class FundsForm(forms.ModelForm):
+    class Meta:
+        model = Funds
+        fields = '__all__'
+        widgets = {
+            'sanction_year': DateInput(),
         }

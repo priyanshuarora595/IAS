@@ -4,6 +4,7 @@
 {% load index %}
 {% load endswith %}
 {% load static %}
+{% load widget_tweaks %}
 
 
 {% block body %}
@@ -27,19 +28,6 @@
 
 </div>
 
-
-
-<!-- <button type="button" class="btn btn-primary text-white"><a href="export_xlsx" class="text-white" style="text-decoration: none;">
-  Export Excel </a>
-</button>
-
-<button type="button" class="btn btn-primary text-white"><a href="export_csv" class="text-white" style="text-decoration: none;">
-  Export CSV</a>
-</button> -->
-<!-- <button type="button" class="btn btn-primary" onclick="multi_print()">
-  Print
-</button> -->
-</div>
 
 
 <div class="container" style="overflow:auto; margin-left:auto;margin-right:auto  ;margin-top:3%;">
@@ -90,6 +78,11 @@
 
               {% for x,v in user_data.items %}
                   {% if x %}
+
+                      {% if forloop.counter|isequal:0  %}
+                      <input type="checkbox" name="select_item" id="select_{{user_data.id}}"  >
+                      {% endif %}
+
                       {% if forloop.counter|isequal:7 or forloop.counter|isequal:9 %}
                         <td>
                           <center>{{"INR"|curr}}{{v}}</center>
@@ -183,7 +176,73 @@
 </div>
 </div>
 
+
+<!-- Add Fund Modal -->
+<div class="modal fade" id="AddFundModal" tabindex="-1" role="dialog" aria-labelledby="AddFundModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="AddFundModalLabel">Add Fund</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="AddFundModalBody">
+        <form action="add_funds" method="post" id="add_fund_form">
+          {% csrf_token %}
+          {% for hidden_field in funds_form.hidden_fields %}
+            {{ hidden_field }}
+          {% endfor %}
+
+          {% if funds_form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+              {% for error in funds_form.non_field_errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% for field in funds_form.visible_fields %}
+          <div class="form-group">
+              {{ field.label_tag }}
+
+              {% if funds_form.is_bound %}
+                {% if field.errors %}
+                  {% render_field field class="form-control is-invalid" %}
+                  {% for error in field.errors %}
+                    <div class="invalid-feedback">
+                      {{ error }}
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  {% render_field field class="form-control is-valid" %}
+                {% endif %}
+              {% else %}
+                {% render_field field class="form-control" %}
+              {% endif %}
+
+              {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+              {% endif %}
+            </div>
+          {% endfor %}
+      </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="add_new_fund()">Save changes</button>
+      </div>
+    </div>
+</div>
+</div>
+
 <script>
+
+  function add_new_fund()
+  {
+    var add_fund_form = document.getElementById("add_fund_form");
+    add_fund_form.submit();
+  }
 
   $('#select-all-delete').click(function (event) {
       if (this.checked) {

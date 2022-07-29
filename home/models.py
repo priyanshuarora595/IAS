@@ -13,11 +13,22 @@ from IAS_Project.settings import STATIC_URL
 
 
 # Create your models here.
+class Funds(models.Model):
+    fund_name = models.CharField(verbose_name="Fund name",max_length=30,blank=False,unique=True)
+    sanction_year = models.DateField(verbose_name="Year",blank=False)
+    balance = models.FloatField(verbose_name="Balance", default=0)
+    
+    def __str__(self):
+        return str(self.fund_name)
+
+
+
 class Items(models.Model):
     Product_sr_no = models.CharField(verbose_name="Product Serial Number",max_length=30,blank=False,unique=True)
     item_name = models.CharField(verbose_name="Item Name",max_length=200,blank=False)
-    year_of_purchase = models.DateField(verbose_name="Year of Purchase",blank=False)
-    fund_name = models.CharField(verbose_name="Fund Name",max_length=200,blank=False)
+    year_of_purchase = models.DateField(verbose_name="Purchase Year",blank=False)
+    # fund_name = models.CharField(verbose_name="Fund Name",max_length=200,blank=False)
+    fund_name = models.ForeignKey(to='Funds', on_delete=models.DO_NOTHING)
     LP_NO = models.CharField(verbose_name="LP Number",max_length=5,blank=False)
     initial_price = models.FloatField(verbose_name="Initial Price", default=0)
     issued_to = models.CharField(verbose_name="Issued To",max_length=100)

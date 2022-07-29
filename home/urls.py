@@ -7,6 +7,7 @@ urlpatterns = [
     path('del_user',views.del_profile,name='del_profile'),
     path('del_item',views.del_item,name='del_item'),
     path('add_item',views.add_item,name='add_item'),
+    path('add_funds',views.add_funds,name='add_funds'),
     path('all_entries',views.all_entries,name='all_entries'),
     path('edit_entry/<str:it_id>/',views.edit_entry,name='edit_entry'),
     path('edit_entry_submit',views.edit_entry_submit,name='edit_entry_submit'),

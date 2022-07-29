@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.models import User
-from .models import Items 
-from .forms import ItemsForm
+from .models import Items , Funds
+from .forms import ItemsForm , FundsForm
 from .resources import ItemResources
 from tablib import Dataset
 from IAS_Project.settings import MEDIA_ROOT
@@ -57,14 +57,17 @@ def del_profile(request):
     
 def all_entries(request):
     if request.user.is_authenticated:
-        columns=Items._meta.get_fields()
+        columns=list(Items._meta.get_fields())
+        columns[0] = 'Select'
         entries=Items.objects.all().values()
         form = ItemsForm()
+        funds_form = FundsForm()
         
         context = {
             'columns' : columns,
             'all_data' : entries,
             'NewEntryForm' : form,
+            'funds_form':funds_form
         }
         return render(request,'All_Entry.html',context)
     else:
@@ -138,6 +141,22 @@ def edit_entry_submit(request):
             messages.error(request,"Unauthorised!")    
         
         return redirect('all_entries')
+    
+    
+def add_funds(request):
+    if request.user.is_authenticated:
+        form = FundsForm(request.POST)
+        try:
+            form.save()
+            messages.success(request,"Success")
+        except Exception as e:
+            messages.error(request,e)
+        
+    return redirect('all_entries')
+        
+    
+    
+    
     
     
 def simple_upload(request):

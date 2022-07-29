@@ -23,6 +23,8 @@
         min-width: 30%;
         padding: 2%;
       }
+
+
     </style>
     <script>
       $(document).ready(function(){
@@ -55,9 +57,12 @@
           "
         >
           <li><a href="/index" class="nav-link px-2 text-white">Home</a></li>
-          <li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#NewEntryModal">Add New Entry</a></li>
           <li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#ScanBarcodeModal">Scan item</a></li>
+          {% if user.is_superuser %}
+          <li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#NewEntryModal">Add New Entry</a></li>
           <li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#UploadFileModal">import</a></li>
+          <li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#AddFundModal">Add Fund</a></li>
+          {% endif %}
           <!-- <li class="nav-link px-2 text-white">Stuck Anywhere? Goto Home</li> -->
         </ul>
         {% if user.is_authenticated %}
@@ -220,6 +225,19 @@
             info_messages[i].setAttribute('style', 'display:none !important');
         }
     }, 3000);
+
+
+    var date_pickers = document.querySelectorAll('input[type=date]')
+
+    for(var i = 0; i < date_pickers.length; i++) {
+      date_pickers[i].max = new Date().toISOString().split("T")[0];
+      date_pickers[i].addEventListener("focus",function (evt) {
+          this.showPicker();
+      });
+
+      }
+
+
 
 </script>
 {% block body %} {% endblock body%}
