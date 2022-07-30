@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.contrib.auth.hashers import check_password
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -14,6 +15,7 @@ import os
 import pandas as pd
 from io import BytesIO as IO
 import xlrd
+from dateutil import parser
 
 
 def index(request):
@@ -76,7 +78,7 @@ def all_entries(request):
 
 def del_item(request):
     if request.user.is_authenticated:
-        passw=request.POST.get('del_pass')
+        passw=request.POST['del_pass']
         print(request.POST)
         print(passw)
         res=check_password(passw,request.user.password)
@@ -120,7 +122,7 @@ def edit_entry(request,it_id):
     
 def edit_entry_submit(request):
     if request.method=="POST":
-        passw=request.POST['del_pass']
+        passw=request.POST['edit_pass']
         res=check_password(passw,request.user.password)
         if res:
             it_id = request.POST['item_id']
@@ -129,7 +131,15 @@ def edit_entry_submit(request):
             del updated_data['csrfmiddlewaretoken']
             del updated_data['item_id']
             for k,v in updated_data.items():
-                setattr(item_obj,k,v[0])
+                if k=='fund_name':
+                    print(v[0])
+                    setattr(item_obj,k,Funds.objects.get(id=v[0]))
+                elif k=="year_of_purchase":
+                    print(v)
+                    setattr(item_obj,k,parser.parse(v[0]))
+                else:
+                    setattr(item_obj,k,v[0])
+                
             # print("form ========================================== \n")
             try:
                 item_obj.save_overwrite()  
@@ -161,53 +171,70 @@ def add_funds(request):
     
 def simple_upload(request):
     flag=0
+    resource = ItemResources()
     if request.method =="POST":
         dataset = Dataset()
         
         try:
             new_item = request.FILES['myfile']
-            print(type(new_item))
+            
             
         except :
             e="NO file selected!"
             messages.error(request,e)
-            return render(request,'all_entries')
+            return redirect('all_entries')
         
-            
+        extension = new_item.name.split(".")[-1].lower()
+        
         if new_item.name.endswith('xlsx'):
             imported_data = dataset.load(new_item.read(),format='xlsx')
         elif new_item.name.endswith('xls'):
-            imported_data = dataset.load(new_item.read(),format='xls')
-            imported_data = imported_data.xls
+            imported_data = dataset.load(new_item.read(), format=extension)
         elif new_item.name.endswith('csv'):
-            imported_data = dataset.load(new_item.read(),format='xlsx')
-            imported_data = imported_data.csv
+            imported_data = dataset.load(new_item.read().decode('utf-8'), format=extension)
             
-            # imported_data = dataset.load(file.read(),format='csv')
+            print((imported_data))
         else:
             messages.info(request,'Wrong format !! We support only xlsx ,xls and csv files.')
             return redirect('all_entries')
         
-        print(imported_data)
-        for data in imported_data:
-            print(data)
-            table_cols = [f.name for f in Items._meta.get_fields()]
-            table_cols.remove('id')
-            table_cols.remove('barcode')
-            data_dict = {k:v for k,v in zip(table_cols,data)}
-            value = Items(**data_dict)
-            try:
-                if data_dict['Product_sr_no'] not in Items.objects.values_list('Product_sr_no',flat=True):
-                    value.save()
-                else:
-                    if flag==0:
-                        messages.error(request,"Duplicate entry {}".format(data_dict['Product_sr_no']))
-                        flag=1
-            except Exception as e:
-                if flag==0:
-                    messages.error(request,e)
-                    flag=1
-                continue
+        result = resource.import_data(imported_data, dry_run=True, collect_failed_rows=True, raise_errors=False,)
+        print(result)
+        if result.has_validation_errors() or result.has_errors():
+                print("error", result.invalid_rows)
+        
+        else:
+            result = resource.import_data(imported_data, dry_run=False, raise_errors=False)
+        
+        # for data in imported_data:
+            
+        #     table_cols = [f.name for f in Items._meta.get_fields()]
+        #     table_cols.remove('id')
+        #     table_cols.remove('barcode')
+            
+        #     data_dict = {k:v for k,v in zip(table_cols,data)}
+            
+        #     value=Items()
+        #     for k,v in data_dict.items():
+        #         if k=='fund_name':
+        #             setattr(value,k,Funds.objects.get(fund_name=v))
+        #         elif k=="year_of_purchase":
+        #             setattr(value,k,parser.parse(v))
+        #         else:
+        #             setattr(value,k,v)
+        
+            # try:
+            #     if data_dict['Product_sr_no'] not in Items.objects.values_list('Product_sr_no',flat=True):
+            #         value.save()
+            #     else:
+            #         if flag==0:
+            #             messages.error(request,"Duplicate entry {}".format(data_dict['Product_sr_no']))
+            #             flag=1
+            # except Exception as e:
+            #     if flag==0:
+            #         messages.error(request,e)
+            #         flag=1
+            #     continue
         if flag==0:
             messages.success(request,"data import successful")
     return redirect('all_entries')
@@ -225,7 +252,7 @@ def add_media_path(x):
 def export_xlsx(request):
     dataset = ItemResources().export()
     df_output = dataset.export('df')
-    
+    print(df_output)
     df_output = df_output.drop(columns=['id'],axis=1)
     df_output['barcode'] = df_output['barcode'].apply(add_media_path)
     excel_file = IO()
@@ -248,7 +275,7 @@ def export_xlsx(request):
 
 def export_csv(request):
     dataset = ItemResources().export()
-    df = dataset.export('df')
+    df_output = dataset.export('df')
     df_output = df_output.drop(columns=['id'],axis=1)
     df_output['barcode'] = df_output['barcode'].apply(add_media_path)
     response = HttpResponse(content_type='text/csv')
@@ -279,5 +306,3 @@ def scan_barcode(request):
     return redirect('index')
 
 
-def get_data_from_barcode(request):
-    pass

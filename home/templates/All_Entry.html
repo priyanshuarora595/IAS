@@ -11,20 +11,36 @@
 
 <div class="head_buttons" style="margin-top: 10px ;">
 
+  {% if user.is_superuser %}
   <button type="button" style="margin-left:10%;" data-toggle="modal" data-target="#DeleteItemModal" class="btn btn-primary">
     Delete
   </button>
+  
   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#UploadFileModal">
     import 
   </button>
 
-    <button class="btn btn-secondary dropdown-toggle" type="button" id="ExportdropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Export</button>
+  {% endif %}
+
+    <button class="btn btn-secondary dropdown-toggle" style="margin-left:10%;" type="button" id="ExportdropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Export</button>
     <div class="dropdown-menu" aria-labelledby="ExportdropdownMenuButton">
       <a href="export_xlsx" class="dropdown-item" style="text-decoration: none;">
         Export Excel </a>
         <a href="export_csv" class="dropdown-item" style="text-decoration: none;">
           Export CSV</a>
     </div>
+
+
+
+    <button type="button" class="btn btn-primary" onclick="multi_print()">
+      Print
+    </button>
+
+    {% if user.is_superuser %}
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#EditEntryModal" onclick="edit()">
+      Update
+    </button>
+    {% endif %}
 
 </div>
 
@@ -45,24 +61,24 @@
                   </th>
                   {% endfor %}
                   
-                <th class="table-head table-data"
+                <!-- <th class="table-head table-data"
                     style="text-align:center ;padding: 8px;border: 1px solid #dddddd;">
                     Delete
                     <i id="delete-all-icon" class="fas fa-trash"></i>
-                    <!-- <input type="checkbox" name="select-all-delete" id="select-all-delete" /> -->
-                </th>
-                <th class="table-head table-data"
+                  
+                </th> -->
+                <!-- <th class="table-head table-data"
                     style="text-align:center ;padding: 8px;border: 1px solid #dddddd;">
                     Print <a href=""><i class="fa fa-print" onclick="multi_print()"></i></a>
                     {% comment %} <i id="delete-all-icon" class="fas fa-trash"></i> {% endcomment %}
                     <input type="checkbox" name="select-all-print" id="select-all-print" />
-                </th>
-                {% if user.is_superuser %}
+                </th> -->
+                <!-- {% if user.is_superuser %}
                 <th class="table-head table-data"
                     style="text-align:center ;padding: 8px;border: 1px solid #dddddd;">
                     Update
                 </th>
-                {% endif %}
+                {% endif %} -->
 
           </tr>
 
@@ -79,11 +95,13 @@
               {% for x,v in user_data.items %}
                   {% if x %}
 
-                      {% if forloop.counter|isequal:0  %}
-                      <input type="checkbox" name="select_item" id="select_{{user_data.id}}"  >
-                      {% endif %}
+                      {% if forloop.counter|isequal:1  %}
+                      <td>
+                      <input type="checkbox" name="select_item" id="{{user_data.id}}" value="{{user_data.barcode}}" >
+                    </td>
+                      
 
-                      {% if forloop.counter|isequal:7 or forloop.counter|isequal:9 %}
+                      {% elif forloop.counter|isequal:7 or forloop.counter|isequal:9 %}
                         <td>
                           <center>{{"INR"|curr}}{{v}}</center>
                         </td>
@@ -106,16 +124,16 @@
                   {% endif %}
               
               {% endfor %}
-              <td tyle="text-align:center ;padding: 16px;border: 1px solid #dddddd;"><input type="checkbox"
+              <!-- <td tyle="text-align:center ;padding: 16px;border: 1px solid #dddddd;"><input type="checkbox"
                 name="delete_item" id="{{user_data.id}}" value="{{user_data.id}}" ></td>
               <td tyle="text-align:center ;padding: 16px;border: 1px solid #dddddd;">
                 <input type="checkbox" name="print_item" id="print_{{user_data.id}}" value="{{user_data.barcode}}" >
                 <i class="fa fa-print" onclick="printDiv('{{user_data.barcode}}')"></i>
-              </td>
+              </td> -->
               {% if user.is_superuser %}
-              <td>
+              <!-- <td>
                 <a href="" class="nav-link px-2 text-black" data-toggle="modal" data-target="#EditEntryModal" onclick="modalpopup('{{user_data.id}}')" ><i class="fas fa-edit"></i></a>
-              </td>
+              </td> -->
               {% endif %}
               
           </tr>
@@ -141,8 +159,10 @@
             {% csrf_token %}  
             <div class="form-group">
               <p>Are you sure to delete the item? This action is irreversible. Your data will be lost and will not be recovered if you have not taken backup (export) Proceed with caution!</p>
-              <label for="exampleFormControlInput1">Password</label>
-              <input type="password" class="form-control" id="del_pass" placeholder="Enter your paswords">
+              <div class="form-group">
+                <label for="id_del_pass">Password</label>
+                  <input type="password" name="del_pass" value="" maxlength="100" class="form-control"  id="del_pass" placeholder="Enter your Password">
+              </div>
             </div>
           </form>
         </div>
@@ -270,19 +290,19 @@
   });
   var del_item_list = new Set();
   var print_item_list = new Set();
-
-
+  var edit_item_list = new Set();
 
   
   function del_items()
   {
-    var markedCheckbox = document.getElementsByName('delete_item');
+    var markedCheckbox = document.getElementsByName('select_item');
     for (var checkbox of markedCheckbox) {  
       if (checkbox.checked)  
-        del_item_list.add(checkbox.value);  
+        del_item_list.add(checkbox.id);  
       else
-        del_item_list.delete(checkbox.value)
+        del_item_list.delete(checkbox.id)
     }
+    console.log(del_item_list);
     var del_form = document.getElementById("del_form");
     const hiddenField = document.createElement('input')
     hiddenField.type = 'hidden';
@@ -294,14 +314,14 @@
 
   function multi_print()
   {
-    var markedCheckbox_print = document.getElementsByName('print_item');
+    var markedCheckbox_print = document.getElementsByName('select_item');
     for (var checkbox of markedCheckbox_print) {  
       if (checkbox.checked)  
         print_item_list.add(checkbox.value);  
       else
         print_item_list.delete(checkbox.value);
     }
-
+    console.log(print_item_list);
     var a = window.open('', '', 'height=500, width=500');
     a.document.write('<html>');
     a.document.write('<body >');
@@ -347,6 +367,26 @@
     a.print();
 }
 
+
+
+
+function edit()
+{
+  var markedCheckbox = document.getElementsByName('select_item');
+    for (var checkbox of markedCheckbox) {  
+      if (checkbox.checked)  
+        edit_item_list.add(checkbox.id);  
+      else
+        edit_item_list.delete(checkbox.id)
+    }
+    console.log(edit_item_list);
+    for( var value of edit_item_list)
+    {
+      console.log(value);
+      modalpopup(value);
+    }
+
+}
 
 function modalpopup(id){
   req_url="edit_entry/"+String(id);

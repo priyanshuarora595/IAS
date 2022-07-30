@@ -16,12 +16,34 @@
     <!-- <link rel="stylesheet" href="{% static 'css/bootstrap.min_4_5.css' %}"> -->
     <link rel="stylesheet" href="{% static 'css/bootstrap_5.css' %}">
     <script src="{% static 'js/icons.js' %}"></script>
+    <script>
+      $(document).ready(function(){
+      `use strict`
+      var datetime = new Date();
+      console.log(datetime);
+      document.getElementById("time").innerHTML = datetime; //it will print on html page
+
+      function refreshTime() {
+        const timeDisplay = document.getElementById("time");
+        const dateString = new Date().toLocaleString();
+        const formattedString = dateString.replace(", ", " - ");
+        timeDisplay.textContent = formattedString;
+      }
+        setInterval(refreshTime, 1000);
+    });
+      
+    </script>
     
     <style>
       .card {
         margin-top: 2% 2% 2% 2%;
         min-width: 30%;
         padding: 2%;
+      }
+
+      td {
+        text-align: center;
+        vertical-align: middle;
       }
 
 
@@ -56,8 +78,8 @@
             mb-md-0
           "
         >
-          <li><a href="/index" class="nav-link px-2 text-white">Home</a></li>
-          <li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#ScanBarcodeModal">Scan item</a></li>
+          <h5><li><a href="/index" class="nav-link px-2 text-white">Home</a></li></h5>
+          <h5><li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#ScanBarcodeModal">Scan item</a></li></h5>
           {% if user.is_superuser %}
           <li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#NewEntryModal">Add New Entry</a></li>
           <li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#UploadFileModal">import</a></li>
@@ -65,12 +87,15 @@
           {% endif %}
           <!-- <li class="nav-link px-2 text-white">Stuck Anywhere? Goto Home</li> -->
         </ul>
+
+        <h4 style="margin-right: 3%;"> Time is <p id="time" > </p></h4>
         {% if user.is_authenticated %}
         <div class="dropdown">
-          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Welcome {{request.user}}</button>
+          <!-- <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Welcome {{request.user}}</button> -->
+          <button class="btn btn-secondary " type="button" onclick="redirect_logout()" >Logout</button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <!-- <a class="dropdown-item" href="" data-toggle="modal" data-target="#DeleteAccount">Delete Profile</a> -->
-            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+            <!-- <a class="dropdown-item"  >Logout</a> -->
             {% comment %} <a class="dropdown-item" href="url 'change_user_password'">Logout</a> {% endcomment %}
             {% comment %} <a class="dropdown-item" href="{% url 'user_profile' user %}">Dashboard</a> {% endcomment %}
           </div>
@@ -101,6 +126,9 @@
 };
     function redirect_login() {
       document.location.href ="{% url 'login'%}";
+};
+    function redirect_logout() {
+      document.location.href ="{% url 'logout' %}";
 };
     function redirect_del_user() {
       document.location.href ="del_user";
