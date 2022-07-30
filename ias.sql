@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 29, 2022 at 08:03 AM
+-- Generation Time: Jul 30, 2022 at 04:21 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.2
 
@@ -112,7 +112,11 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 (29, 'Can add items', 8, 'add_items'),
 (30, 'Can change items', 8, 'change_items'),
 (31, 'Can delete items', 8, 'delete_items'),
-(32, 'Can view items', 8, 'view_items');
+(32, 'Can view items', 8, 'view_items'),
+(33, 'Can add funds', 9, 'add_funds'),
+(34, 'Can change funds', 9, 'change_funds'),
+(35, 'Can delete funds', 9, 'delete_funds'),
+(36, 'Can view funds', 9, 'view_funds');
 
 -- --------------------------------------------------------
 
@@ -139,8 +143,8 @@ CREATE TABLE `auth_user` (
 --
 
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
-(5, 'pbkdf2_sha256$260000$Va0sdR40E9lNuu1cCwFxUM$5D5vzRkDL2vVndp2EyvsNm/01B0hHIbGUlfB2GiuEvw=', '2022-07-27 11:19:25.408080', 1, 'admin', '', '', '', 1, 1, '2022-07-25 07:16:53.153173'),
-(6, 'pbkdf2_sha256$260000$u5pt1o54aaXANIXJQZtHGI$DnxSisX9iTf938m/UzTnZ2y572isWg2iiOjZjKupE3Q=', '2022-07-29 05:31:17.185431', 0, 'officer1', '', '', 'off1@test.org', 0, 1, '2022-07-25 10:56:40.902797');
+(5, 'pbkdf2_sha256$260000$Va0sdR40E9lNuu1cCwFxUM$5D5vzRkDL2vVndp2EyvsNm/01B0hHIbGUlfB2GiuEvw=', '2022-07-30 05:31:40.544147', 1, 'admin', '', '', '', 1, 1, '2022-07-25 07:16:53.153173'),
+(6, 'pbkdf2_sha256$260000$u5pt1o54aaXANIXJQZtHGI$DnxSisX9iTf938m/UzTnZ2y572isWg2iiOjZjKupE3Q=', '2022-07-30 01:38:43.209164', 0, 'officer1', '', '', 'off1@test.org', 0, 1, '2022-07-25 10:56:40.902797');
 
 -- --------------------------------------------------------
 
@@ -183,6 +187,14 @@ CREATE TABLE `django_admin_log` (
   `user_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `django_admin_log`
+--
+
+INSERT INTO `django_admin_log` (`id`, `action_time`, `object_id`, `object_repr`, `action_flag`, `change_message`, `content_type_id`, `user_id`) VALUES
+(1, '2022-07-29 23:31:24.383773', '47', 'test123', 1, '[{\"added\": {}}]', 8, 5),
+(2, '2022-07-29 23:43:59.023854', '47', 'test123', 2, '[]', 8, 5);
+
 -- --------------------------------------------------------
 
 --
@@ -206,6 +218,7 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 (2, 'auth', 'permission'),
 (4, 'auth', 'user'),
 (5, 'contenttypes', 'contenttype'),
+(9, 'home', 'funds'),
 (8, 'home', 'items'),
 (6, 'sessions', 'session');
 
@@ -246,10 +259,7 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 (17, 'auth', '0012_alter_user_first_name_max_length', '2022-07-25 05:08:08.259582'),
 (18, 'sessions', '0001_initial', '2022-07-25 05:08:08.307631'),
 (19, 'accounts', '0001_initial', '2022-07-25 06:17:54.212145'),
-(24, 'home', '0001_initial', '2022-07-26 10:57:07.359884'),
-(25, 'home', '0002_auto_20220726_1650', '2022-07-26 11:20:42.217425'),
-(26, 'home', '0003_auto_20220726_1654', '2022-07-26 11:25:03.397975'),
-(27, 'home', '0004_auto_20220729_0140', '2022-07-28 20:11:06.109910');
+(31, 'home', '0001_initial', '2022-07-30 06:40:50.262610');
 
 -- --------------------------------------------------------
 
@@ -270,11 +280,33 @@ CREATE TABLE `django_session` (
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
 ('dm7ffa4jdnlmsneasqxrgqlx7cni0676', '.eJxVjDsOwjAQBe_iGlnxP6akzxmsXduLA8iW4qRC3J1ESgHtm5n3ZgG2tYSt5yXMiV2ZZZffDSE-cz1AekC9Nx5bXZcZ-aHwk3Y-tZRft9P9OyjQy15nENLgaBTRMHoyCkwWhDGSl16lwekowROhdlZTwqiVFFI7snanZNnnC_tqOEA:1oHAyN:2cDopfV3uO10En8BWJny15IzDc5pyhYlIX8OzoyZhNI', '2022-08-11 21:23:11.980409'),
 ('frv6oldwnf0i6swkzyc4dbx16pde649e', '.eJxVjDsOwjAQBe_iGlnxP6akzxmsXduLA8iW4qRC3J1ESgHtm5n3ZgG2tYSt5yXMiV2ZZZffDSE-cz1AekC9Nx5bXZcZ-aHwk3Y-tZRft9P9OyjQy15nENLgaBTRMHoyCkwWhDGSl16lwekowROhdlZTwqiVFFI7snanZNnnC_tqOEA:1oGR63:s3t_6pY0nbiqXuIegDxFeDHTsNEOgoqfX5eFTO9j7uk', '2022-08-09 20:24:03.035894'),
-('fux3cgw7ko38ene145wwkeb5p7oznfu9', '.eJxVjDsOwjAQBe_iGlnxP6akzxmsXduLA8iW4qRC3J1ESgHtm5n3ZgG2tYSt5yXMiV2ZZZffDSE-cz1AekC9Nx5bXZcZ-aHwk3Y-tZRft9P9OyjQy15nENLgaBTRMHoyCkwWhDGSl16lwekowROhdlZTwqiVFFI7snanZNnnC_tqOEA:1oHIaj:d3LqqqMEd04NV4xav6JQVIpg4HX1H2hOzeOZu_L6Mzc', '2022-08-12 05:31:17.193372'),
 ('i0t7z1kgc2q6kbl5m80ci0knhega0e2y', '.eJxVjDsOwjAQBe_iGlnxP6akzxmsXduLA8iW4qRC3J1ESgHtm5n3ZgG2tYSt5yXMiV2ZZZffDSE-cz1AekC9Nx5bXZcZ-aHwk3Y-tZRft9P9OyjQy15nENLgaBTRMHoyCkwWhDGSl16lwekowROhdlZTwqiVFFI7snanZNnnC_tqOEA:1oH8MD:FKcu2wj7UD7qPrE9hY6uYdnXPkA4VnVmh_YyBLGvXmc', '2022-08-11 18:35:37.299117'),
 ('ijmzm3k87mcxb9fgijp7lonh9vzd9d4m', '.eJxVjDsOwjAQBe_iGlnxP6akzxmsXduLA8iW4qRC3J1ESgHtm5n3ZgG2tYSt5yXMiV2ZZZffDSE-cz1AekC9Nx5bXZcZ-aHwk3Y-tZRft9P9OyjQy15nENLgaBTRMHoyCkwWhDGSl16lwekowROhdlZTwqiVFFI7snanZNnnC_tqOEA:1oG4AF:5uUr6TIp5bvUPWHFnbQ6c77tJiLkuxJBleJAsvLA7D8', '2022-08-08 19:54:51.549138'),
+('pqunz6f68h7xekbnkd2x40azfr5cch5r', '.eJxVjDsOwjAQBe_iGlnZ-BdT0nOGaL27xgFkS_lUiLtDpBTQvpl5LzXitpZxW2QeJ1Zn5dTpd0tID6k74DvWW9PU6jpPSe-KPuiir43leTncv4OCS_nWVlyPg5NgGAJ4FxMwRqEEYBwRdUMXTBIhy5x9hmwpoje-J0IANur9Ae-GOIU:1oHY8i:0opTR4HciiVH_Hue8J1jz-Os9uJiALyvbBzegjdRVfU', '2022-08-12 22:07:24.337214'),
 ('w1lcevwmlrauplosruze8jh2hghkh1x6', 'e30:1oFrOH:Kl4Hu2MmLvIXzsU05OVfsQ-QBXfT63OloxLYGNpjpyw', '2022-08-08 06:16:29.832958'),
-('ycskpplzt7vw7vbld07lq247prx8gyow', '.eJxVjDsOwjAQBe_iGlnxP6akzxmsXduLA8iW4qRC3J1ESgHtm5n3ZgG2tYSt5yXMiV2ZZZffDSE-cz1AekC9Nx5bXZcZ-aHwk3Y-tZRft9P9OyjQy15nENLgaBTRMHoyCkwWhDGSl16lwekowROhdlZTwqiVFFI7snanZNnnC_tqOEA:1oFvlR:o9B1VkktVPbbGWl4dlN00_pccKkz6FjHZ9OUV46E5_s', '2022-08-08 10:56:41.358654');
+('ycskpplzt7vw7vbld07lq247prx8gyow', '.eJxVjDsOwjAQBe_iGlnxP6akzxmsXduLA8iW4qRC3J1ESgHtm5n3ZgG2tYSt5yXMiV2ZZZffDSE-cz1AekC9Nx5bXZcZ-aHwk3Y-tZRft9P9OyjQy15nENLgaBTRMHoyCkwWhDGSl16lwekowROhdlZTwqiVFFI7snanZNnnC_tqOEA:1oFvlR:o9B1VkktVPbbGWl4dlN00_pccKkz6FjHZ9OUV46E5_s', '2022-08-08 10:56:41.358654'),
+('z3k21mzn4ulzk98p4zylz1mtbmgll5gp', '.eJxVjDsOwjAQBe_iGlnZ-BdT0nOGaL27xgFkS_lUiLtDpBTQvpl5LzXitpZxW2QeJ1Zn5dTpd0tID6k74DvWW9PU6jpPSe-KPuiir43leTncv4OCS_nWVlyPg5NgGAJ4FxMwRqEEYBwRdUMXTBIhy5x9hmwpoje-J0IANur9Ae-GOIU:1oHOFt:8Rk2HBbgENEPCsEg1bW-xzjR0jtcpYgTt5yL0xqmfpU', '2022-08-12 11:34:09.906070'),
+('zqeejzzqcrhh604mr7pgclpxl5mxiyo7', '.eJxVjDsOwjAQBe_iGlnZ-BdT0nOGaL27xgFkS_lUiLtDpBTQvpl5LzXitpZxW2QeJ1Zn5dTpd0tID6k74DvWW9PU6jpPSe-KPuiir43leTncv4OCS_nWVlyPg5NgGAJ4FxMwRqEEYBwRdUMXTBIhy5x9hmwpoje-J0IANur9Ae-GOIU:1oHf4e:UKmI3LJxdNJqiCK4_GqwHCcQKvh8htyna3Cuehe6-zQ', '2022-08-13 05:31:40.556493');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `home_funds`
+--
+
+CREATE TABLE `home_funds` (
+  `fund_name` varchar(30) NOT NULL,
+  `sanction_year` date NOT NULL,
+  `balance` double NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `home_funds`
+--
+
+INSERT INTO `home_funds` (`fund_name`, `sanction_year`, `balance`) VALUES
+('F1', '2022-07-30', 100000000),
+('F2', '2022-07-30', 200000);
 
 -- --------------------------------------------------------
 
@@ -287,23 +319,24 @@ CREATE TABLE `home_items` (
   `Product_sr_no` varchar(30) NOT NULL,
   `item_name` varchar(200) NOT NULL,
   `year_of_purchase` date NOT NULL,
-  `fund_name` varchar(200) NOT NULL,
   `LP_NO` varchar(5) NOT NULL,
   `initial_price` double NOT NULL,
   `issued_to` varchar(100) NOT NULL,
   `Depreciated_Price` double NOT NULL,
   `Remarks` longtext NOT NULL,
-  `barcode` varchar(100) NOT NULL
+  `barcode` varchar(100) NOT NULL,
+  `fund_name` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `home_items`
 --
 
-INSERT INTO `home_items` (`id`, `Product_sr_no`, `item_name`, `year_of_purchase`, `fund_name`, `LP_NO`, `initial_price`, `issued_to`, `Depreciated_Price`, `Remarks`, `barcode`) VALUES
-(33, 'dfwq', 'dwd', '2020-05-12', 'wh123', 'asdc', 1312, 'Mr.y', 23, 'test4', 'barcodes/30WH2020DW.png'),
-(37, 'ab1234', 'qxxw', '2004-11-12', 'wdf', 'xqed', 213212, 'MR.X', 213, 'dup add entry post', 'barcodes/30WD2004QX.png'),
-(40, 'ah213', 'azsedrf', '2020-11-12', 'qa231', 'qw213', 2341.21, 'MR.X', 12.21, 'import', 'barcodes/30QA2020AZ.png');
+INSERT INTO `home_items` (`id`, `Product_sr_no`, `item_name`, `year_of_purchase`, `LP_NO`, `initial_price`, `issued_to`, `Depreciated_Price`, `Remarks`, `barcode`, `fund_name`) VALUES
+(1, 'ah222', 'azsedrf', '2020-11-12', 'qw213', 0, 'MR.X', 0, 'import', 'barcodes/30F12020AZ.png', 'F1'),
+(4, 'ah213', 'azsedrf', '2020-11-12', 'qw213', 0, 'MR.X', 0, 'import', 'barcodes/30F12020AZ_Wh7ObFR.png', 'F1'),
+(5, 'dwc', 'wdwc', '2020-05-11', 'wq123', 0, 'MR.X', 0, 'multi_imports', 'barcodes/30F22020WD.png', 'F2'),
+(6, 'dfw', 'dwd', '2020-05-12', 'asdc', 0, 'Mr.y', 0, 'test4', 'barcodes/30F22020DW.png', 'F2');
 
 --
 -- Indexes for dumped tables
@@ -390,11 +423,18 @@ ALTER TABLE `django_session`
   ADD KEY `django_session_expire_date_a5c62663` (`expire_date`);
 
 --
+-- Indexes for table `home_funds`
+--
+ALTER TABLE `home_funds`
+  ADD PRIMARY KEY (`fund_name`);
+
+--
 -- Indexes for table `home_items`
 --
 ALTER TABLE `home_items`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `home_items_Product_sr_no_4d00524f_uniq` (`Product_sr_no`);
+  ADD UNIQUE KEY `Product_sr_no` (`Product_sr_no`),
+  ADD KEY `home_items_fund_name_25858679_fk_home_funds_fund_name` (`fund_name`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -422,7 +462,7 @@ ALTER TABLE `auth_group_permissions`
 -- AUTO_INCREMENT for table `auth_permission`
 --
 ALTER TABLE `auth_permission`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `auth_user`
@@ -446,25 +486,25 @@ ALTER TABLE `auth_user_user_permissions`
 -- AUTO_INCREMENT for table `django_admin_log`
 --
 ALTER TABLE `django_admin_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `django_content_type`
 --
 ALTER TABLE `django_content_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `home_items`
 --
 ALTER TABLE `home_items`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
@@ -509,6 +549,12 @@ ALTER TABLE `auth_user_user_permissions`
 ALTER TABLE `django_admin_log`
   ADD CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
   ADD CONSTRAINT `django_admin_log_user_id_c564eba6_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
+
+--
+-- Constraints for table `home_items`
+--
+ALTER TABLE `home_items`
+  ADD CONSTRAINT `home_items_fund_name_25858679_fk_home_funds_fund_name` FOREIGN KEY (`fund_name`) REFERENCES `home_funds` (`fund_name`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
