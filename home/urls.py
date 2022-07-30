@@ -13,6 +13,7 @@ urlpatterns = [
     path('edit_entry_submit',views.edit_entry_submit,name='edit_entry_submit'),
     path('simple_upload',views.simple_upload,name='simple_upload'),
     path('export_xlsx',views.export_xlsx,name='export_xlsx'),
+    path('export_xls',views.export_xls,name='export_xls'),
     path('export_csv',views.export_csv,name='export_csv'),
     path('scan_barcode',views.scan_barcode,name='scan_barcode'),
 ]
