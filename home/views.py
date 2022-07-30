@@ -1,5 +1,4 @@
-from datetime import datetime
-from email import header
+from django.core.cache import cache
 from django.contrib.auth.hashers import check_password
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -15,17 +14,18 @@ from pathlib import Path
 import os
 import pandas as pd
 from io import BytesIO as IO
-import xlrd
+
 from dateutil import parser
 
 
 def index(request):
     print(request.method)
     if request.user.is_authenticated:
-        
+        funds=Funds.objects.all()
         form = ItemsForm()
         context = {
-            'NewEntryForm' : form
+            'NewEntryForm' : form,
+            'funds' : funds
         }
         return render (request,'landing_page.html',context)
     else:
@@ -63,20 +63,66 @@ def all_entries(request):
         columns=list(Items._meta.get_fields())
         columns[0] = 'Select'
         entries=Items.objects.all().values()
+        funds=Funds.objects.all()
+        # entries=Items.objects.filter(fund_name='F1').values()
+        # print(entries)
         form = ItemsForm()
         funds_form = FundsForm()
-        print(entries)
+        # print(entries)
         
         context = {
             'columns' : columns,
             'all_data' : entries,
             'NewEntryForm' : form,
-            'funds_form':funds_form
+            'funds_form':funds_form,
+            'funds' : funds
         }
         return render(request,'All_Entry.html',context)
     else:
         messages.error(request,"UNAUTHENTICATED!")
     return redirect('index')
+
+
+
+def filter_data(request):
+    print(request.POST)
+    columns=list(Items._meta.get_fields())
+    form = ItemsForm()
+    funds_form = FundsForm()
+    funds=Funds.objects.all()
+    try:
+        filter_by=request.POST['filter_by']
+        if filter_by=='Fund':
+            fund_name_inp=request.POST['Fund']
+            entries=Items.objects.filter(fund_name=fund_name_inp).values()
+            # request.session['last_query']=pd.DataFrame.from_records(entries).to_dict()
+            # cache.set('last_query',entries)
+            request.session['last_query'] = {'filter_by':'fund_name','val':fund_name_inp}
+        elif filter_by=='Year':
+            print("year====================================================")
+            year_inp = request.POST['year']
+            entries=Items.objects.filter(year_of_purchase__year=year_inp).values()
+            request.session['last_query'] = {'filter_by':'year_of_purchase__year','val':year_inp}
+        
+        elif filter_by=="FNY":
+            fund_name_inp=request.POST['Fund']
+            year_inp = request.POST['year']
+            entries=Items.objects.filter(fund_name=fund_name_inp,year_of_purchase__year=year_inp).values()
+            request.session['last_query'] = {'filter_by1':'fund_name','val1':fund_name_inp,'filter_by2':'year_of_purchase__year','val2':year_inp}
+            
+    except:
+        return redirect('all_entries')
+    context = {
+            'columns' : columns,
+            'all_data' : entries,
+            'NewEntryForm' : form,
+            'funds_form':funds_form,
+            'funds' : funds
+        }
+    return render(request,'All_Entry.html',context)
+
+
+
 
 def del_item(request):
     if request.user.is_authenticated:
@@ -258,6 +304,32 @@ def add_media_path(x):
             
 def export_xlsx(request):
     dataset = ItemResources().export()
+    
+    try:
+        if request.session['last_query']:
+            x=request.session['last_query']
+            if len(x)>2:
+                filter_by1 = x['filter_by1']
+                filter_val1 = x['val1']
+                filter_by2 = x['filter_by2']
+                filter_val2 = x['val2']
+                kwargs = {
+                    '{0}'.format(filter_by1): filter_val1,
+                    '{0}'.format(filter_by2): filter_val2,
+                }
+            else:
+                
+                filter_by = x['filter_by']
+                filter_val = x['val']
+                
+                kwargs = {
+                    '{0}'.format(filter_by): filter_val,
+                }
+            query=Items.objects.filter(**kwargs)
+            print(query)
+            dataset = ItemResources().export(queryset=query)
+    except Exception as e:
+        print(e)
     df_output = dataset.export('df')
     print(df_output)
     df_output = df_output.drop(columns=['id'],axis=1)
@@ -281,6 +353,31 @@ def export_xlsx(request):
 
 def export_xls(request):
     dataset = ItemResources().export()
+    try:
+        if request.session['last_query']:
+            x=request.session['last_query']
+            if len(x)>2:
+                filter_by1 = x['filter_by1']
+                filter_val1 = x['val1']
+                filter_by2 = x['filter_by2']
+                filter_val2 = x['val2']
+                kwargs = {
+                    '{0}'.format(filter_by1): filter_val1,
+                    '{0}'.format(filter_by2): filter_val2,
+                }
+            else:
+                
+                filter_by = x['filter_by']
+                filter_val = x['val']
+                
+                kwargs = {
+                    '{0}'.format(filter_by): filter_val,
+                }
+            query=Items.objects.filter(**kwargs)
+            print(query)
+            dataset = ItemResources().export(queryset=query)
+    except Exception as e:
+        print(e)
     df_output = dataset.export('df')
     print(df_output)
     df_output = df_output.drop(columns=['id'],axis=1)
@@ -304,7 +401,33 @@ def export_xls(request):
 
 def export_csv(request):
     dataset = ItemResources().export()
+    try:
+        if request.session['last_query']:
+            x=request.session['last_query']
+            if len(x)>2:
+                filter_by1 = x['filter_by1']
+                filter_val1 = x['val1']
+                filter_by2 = x['filter_by2']
+                filter_val2 = x['val2']
+                kwargs = {
+                    '{0}'.format(filter_by1): filter_val1,
+                    '{0}'.format(filter_by2): filter_val2,
+                }
+            else:
+                
+                filter_by = x['filter_by']
+                filter_val = x['val']
+                
+                kwargs = {
+                    '{0}'.format(filter_by): filter_val,
+                }
+            query=Items.objects.filter(**kwargs)
+            print(query)
+            dataset = ItemResources().export(queryset=query)
+    except Exception as e:
+        print(e)
     df_output = dataset.export('df')
+    print(df_output)
     df_output = df_output.drop(columns=['id'],axis=1)
     df_output['barcode'] = df_output['barcode'].apply(add_media_path)
     response = HttpResponse(content_type='text/csv')

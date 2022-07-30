@@ -16,4 +16,5 @@ urlpatterns = [
     path('export_xls',views.export_xls,name='export_xls'),
     path('export_csv',views.export_csv,name='export_csv'),
     path('scan_barcode',views.scan_barcode,name='scan_barcode'),
+    path('filter_data',views.filter_data,name='filter_data'),
 ]

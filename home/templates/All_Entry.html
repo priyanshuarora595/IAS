@@ -11,38 +11,40 @@
 
 <div class="head_buttons" style="margin-top: 10px ;">
 
+
+  <button type="button" class="btn btn-primary" style="margin-left:8%;" onclick="multi_print()">
+    Print
+  </button>
+
   {% if user.is_superuser %}
-  <button type="button" style="margin-left:10%;" data-toggle="modal" data-target="#DeleteItemModal" class="btn btn-primary">
+  <button type="button" style="margin-left:8%;" data-toggle="modal" data-target="#DeleteItemModal" class="btn btn-primary">
     Delete
   </button>
+
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#EditEntryModal" onclick="edit()">
+      Update
+    </button>
   
   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#UploadFileModal">
     import 
   </button>
-
   {% endif %}
 
-    <button class="btn btn-secondary dropdown-toggle" style="margin-left:10%;" type="button" id="ExportdropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Export</button>
-    <div class="dropdown-menu" aria-labelledby="ExportdropdownMenuButton">
-      <a href="export_xlsx" class="dropdown-item" style="text-decoration: none;">
-        Export Excel </a>
-        <a href="export_csv" class="dropdown-item" style="text-decoration: none;">
-          Export CSV</a>
+  <button class="btn btn-secondary dropdown-toggle"  type="button" id="ExportdropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Export</button>
+  <div class="dropdown-menu" aria-labelledby="ExportdropdownMenuButton">
+    <a href="export_xlsx" class="dropdown-item" style="text-decoration: none;">
+      Export Excel </a>
+      <a href="export_csv" class="dropdown-item" style="text-decoration: none;">
+        Export CSV</a>
         <a href="export_xls" class="dropdown-item" style="text-decoration: none;">
           Export xls</a>
+        </div>
+        
+        
+
+    <div id="filter" style="display: inline-block ; margin-left:5%" >
+      {% include 'filter_form.html' %}
     </div>
-
-
-
-    <button type="button" class="btn btn-primary" onclick="multi_print()">
-      Print
-    </button>
-
-    {% if user.is_superuser %}
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#EditEntryModal" onclick="edit()">
-      Update
-    </button>
-    {% endif %}
 
 </div>
 

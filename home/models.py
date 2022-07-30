@@ -51,7 +51,7 @@ class Items(models.Model):
     def save(self, *args, **kwargs):          # overriding save() 
         COD128 = barcode.get_barcode_class('code128')
         rv = BytesIO()
-        name = str(30)+str(self.fund_name)[0:2]+str(self.year_of_purchase.strftime('%Y'))+str(self.item_name)[0:2]
+        name = str(30)+str(self.fund_name)[0:2]+str(self.year_of_purchase.strftime('%Y'))+str(self.item_name)[0:2]+str(self.Product_sr_no)[-2:]
         code = COD128(name.upper(), writer=ImageWriter()).write(rv)
         self.barcode.save(f'{name.upper()}.png', File(rv), save=False)
         return super().save(*args, **kwargs)

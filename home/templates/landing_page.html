@@ -10,40 +10,9 @@
     });
     </script>
 
-
-
-
-    <!-- <div class="card-deck">
-      <div class="card"  data-toggle="modal" data-target="#ScanBarcodeModal" style="height: 50%;">
-        <a href="#" class="card-block stretched-link text-decoration-none"></a>
-        <img class="card-img-top" src="..." alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">Scan Code</h5>
-          <p class="card-text">Scan a Bar code with the Scanner to get information.</p>
-        </div>
-      </div>
-
-      <div class="card" data-toggle="modal" data-target="#NewEntryModal">
-        <a href="#" class="card-block stretched-link text-decoration-none"></a>
-        <img class="card-img-top" src="..." alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title" >ADD Entry</h5>
-          <p class="card-text">ADD a new record for an item.</p>
-          <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-        </div>
-      </div>
-      <div class="card" >
-        <a class="card-block stretched-link text-decoration-none" href="all_entries"></a>
-        <img class="card-img-top" src="..." alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">Show All Entries</h5>
-          <p class="card-text">Click Here to see all the items.</p>
-        </div>
-      </div>
-    </div> -->
-
+    <center><h1 style="margin-top: 3%;">Inventory Asset Management System</h1></center>
     <!-- <div class="controls"> -->
-      <div class ="controls pt-5" id="controls">
+      <center><div class ="controls pt-2" id="controls" style="width: 80%;">
     <div class="buttons pt-5" >
         <div class="row row-cols-1 row-cols-md-2 m-3 g-5">
             <div class="col" data-toggle="modal" data-target="#ScanBarcodeModal" style="height: 50%;">
@@ -68,13 +37,13 @@
               
               </div>
             </div>
-            <div class="col">
+            <div class="col" data-toggle="modal" data-target="#SearchModal">
               <div class="card h-100">
                 <a class="card-block stretched-link text-decoration-none" href="#"></a>
                 <div class="card-body">
                   <img src="/static/image/search.png " height="50px" alt="">
                   <h5 class="card-title mt-2"><b>Search</b></h5>
-                  <p class="card-text">Search an entry by the Year of purchase.</p>
+                  <p class="card-text">Search an entry by the Year of purchase of Fund name.</p>
                 </div>
               
               </div>
@@ -93,14 +62,14 @@
             </div>
             
     </div>
-  </div>
+  </div></center>
 
 
 
 
 
 
-  <!-- Modal -->
+  <!-- NEW Entry Modal -->
   <div class="modal fade" id="NewEntryModal" tabindex="-1" role="dialog" aria-labelledby="NewEntryModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -124,10 +93,92 @@
       </div>
     </div>
   </div>
+
+
+
+  <!-- Search Modal -->
+  <div class="modal fade" id="SearchModal" tabindex="-1" role="dialog" aria-labelledby="SearchModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="SearchModalLabel">Search Entry</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form name="filter_form" id="filter_form" action="filter_data" method="post" style="margin-top: 3%;">
+            {% csrf_token %}
+            <div class="form-group">
+            Filter by : <select name="filter_by" id="filter_by" class="form-control">
+                <option value="select" selected="selected">choose one</option>
+                <option value="Fund" >Fund</option>
+                <option value="Year" >year</option>
+                <option value="FNY" >Fund and year</option>
+            </select>
+          </div>
+            <div class="form-group">
+            Fund: <select name="Fund" id="fund" disabled class="form-control">
+                <option value="select" selected="selected">Select fund</option>
+                {% for i in funds %}
+                <option value="{{i.fund_name}}" >{{i.fund_name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+              <div class="form-group">
+            year = <input type="number" name="year" id="year" disabled class="form-control">
+          </div>
+          
+        </form>
+        
+        <script>
+            window.onload = function()
+            {
+                var filter_by_selection = document.getElementById('filter_by');
+                filter_by_selection.addEventListener('change', function handleChange(event) {
+                    var filter_val = event.target.value;
+                    if(filter_val=="Fund")
+                    {
+                        document.getElementById('fund').disabled=false;
+                        document.getElementById('year').disabled=true;
+                    }
+        
+                    else if (filter_val=='Year') 
+                    {
+                        document.getElementById('fund').disabled=true;
+                        document.getElementById('year').disabled=false;
+                    }
+        
+                    else if (filter_val=="FNY")
+                    {
+                        document.getElementById('fund').disabled=false;
+                        document.getElementById('year').disabled=false;
+                    }
+        
+                    else
+                    {
+                        document.getElementById('fund').disabled=true;
+                        document.getElementById('year').disabled=true;
+                    }
+                });
+            }
+        </script>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="SubmitFilterForm()">Search</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <script>
     function SubmitForm()
     {
         document.getElementById("NewEntryForm").submit();
+    }
+    function SubmitFilterForm()
+    {
+        document.getElementById("filter_form").submit();
     }
 
     function ScanBarcode(){

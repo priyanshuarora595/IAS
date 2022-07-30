@@ -1,0 +1,55 @@
+<form name="filter_form" id="filter_form" action="filter_data" method="post" style="margin-top: 3%;">
+    {% csrf_token %}
+    Filter by : <select name="filter_by" id="filter_by">
+        <option value="select" selected="selected">choose one</option>
+        <option value="Fund" >Fund</option>
+        <option value="Year" >year</option>
+        <option value="FNY" >Fund and year</option>
+    </select>
+    
+    Fund: <select name="Fund" id="fund" disabled>
+        <option value="select" selected="selected">Select fund</option>
+        {% for i in funds %}
+        <option value="{{i.fund_name}}" >{{i.fund_name}}</option>
+        {% endfor %}
+      </select>
+
+    year = <input type="number" name="year" id="year" disabled>
+    
+    <button type="submit" class="btn btn-primary" >
+        Filter
+      </button>
+</form>
+
+<script>
+    window.onload = function()
+    {
+        var filter_by_selection = document.getElementById('filter_by');
+        filter_by_selection.addEventListener('change', function handleChange(event) {
+            var filter_val = event.target.value;
+            if(filter_val=="Fund")
+            {
+                document.getElementById('fund').disabled=false;
+                document.getElementById('year').disabled=true;
+            }
+
+            else if (filter_val=='Year') 
+            {
+                document.getElementById('fund').disabled=true;
+                document.getElementById('year').disabled=false;
+            }
+
+            else if (filter_val=="FNY")
+            {
+                document.getElementById('fund').disabled=false;
+                document.getElementById('year').disabled=false;
+            }
+
+            else
+            {
+                document.getElementById('fund').disabled=true;
+                document.getElementById('year').disabled=true;
+            }
+        });
+    }
+</script>
