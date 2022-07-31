@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 30, 2022 at 04:21 PM
+-- Generation Time: Jul 31, 2022 at 08:39 AM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.2
 
@@ -143,8 +143,8 @@ CREATE TABLE `auth_user` (
 --
 
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
-(5, 'pbkdf2_sha256$260000$Va0sdR40E9lNuu1cCwFxUM$5D5vzRkDL2vVndp2EyvsNm/01B0hHIbGUlfB2GiuEvw=', '2022-07-30 05:31:40.544147', 1, 'admin', '', '', '', 1, 1, '2022-07-25 07:16:53.153173'),
-(6, 'pbkdf2_sha256$260000$u5pt1o54aaXANIXJQZtHGI$DnxSisX9iTf938m/UzTnZ2y572isWg2iiOjZjKupE3Q=', '2022-07-30 01:38:43.209164', 0, 'officer1', '', '', 'off1@test.org', 0, 1, '2022-07-25 10:56:40.902797');
+(5, 'pbkdf2_sha256$260000$Va0sdR40E9lNuu1cCwFxUM$5D5vzRkDL2vVndp2EyvsNm/01B0hHIbGUlfB2GiuEvw=', '2022-07-31 06:24:17.721138', 1, 'admin', '', '', '', 1, 1, '2022-07-25 07:16:53.153173'),
+(6, 'pbkdf2_sha256$260000$u5pt1o54aaXANIXJQZtHGI$DnxSisX9iTf938m/UzTnZ2y572isWg2iiOjZjKupE3Q=', '2022-07-30 21:28:41.708649', 0, 'officer1', '', '', 'off1@test.org', 0, 1, '2022-07-25 10:56:40.902797');
 
 -- --------------------------------------------------------
 
@@ -286,7 +286,7 @@ INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALU
 ('w1lcevwmlrauplosruze8jh2hghkh1x6', 'e30:1oFrOH:Kl4Hu2MmLvIXzsU05OVfsQ-QBXfT63OloxLYGNpjpyw', '2022-08-08 06:16:29.832958'),
 ('ycskpplzt7vw7vbld07lq247prx8gyow', '.eJxVjDsOwjAQBe_iGlnxP6akzxmsXduLA8iW4qRC3J1ESgHtm5n3ZgG2tYSt5yXMiV2ZZZffDSE-cz1AekC9Nx5bXZcZ-aHwk3Y-tZRft9P9OyjQy15nENLgaBTRMHoyCkwWhDGSl16lwekowROhdlZTwqiVFFI7snanZNnnC_tqOEA:1oFvlR:o9B1VkktVPbbGWl4dlN00_pccKkz6FjHZ9OUV46E5_s', '2022-08-08 10:56:41.358654'),
 ('z3k21mzn4ulzk98p4zylz1mtbmgll5gp', '.eJxVjDsOwjAQBe_iGlnZ-BdT0nOGaL27xgFkS_lUiLtDpBTQvpl5LzXitpZxW2QeJ1Zn5dTpd0tID6k74DvWW9PU6jpPSe-KPuiir43leTncv4OCS_nWVlyPg5NgGAJ4FxMwRqEEYBwRdUMXTBIhy5x9hmwpoje-J0IANur9Ae-GOIU:1oHOFt:8Rk2HBbgENEPCsEg1bW-xzjR0jtcpYgTt5yL0xqmfpU', '2022-08-12 11:34:09.906070'),
-('zqeejzzqcrhh604mr7pgclpxl5mxiyo7', '.eJxVjDsOwjAQBe_iGlnZ-BdT0nOGaL27xgFkS_lUiLtDpBTQvpl5LzXitpZxW2QeJ1Zn5dTpd0tID6k74DvWW9PU6jpPSe-KPuiir43leTncv4OCS_nWVlyPg5NgGAJ4FxMwRqEEYBwRdUMXTBIhy5x9hmwpoje-J0IANur9Ae-GOIU:1oHf4e:UKmI3LJxdNJqiCK4_GqwHCcQKvh8htyna3Cuehe6-zQ', '2022-08-13 05:31:40.556493');
+('z463afrfyj24mkubk9mtwc9ikkhqozp3', '.eJxVjDsOwjAQBe_iGlnZ-BdT0nOGaL27xgFkS_lUiLtDpBTQvpl5LzXitpZxW2QeJ1Zn5dTpd0tID6k74DvWW9PU6jpPSe-KPuiir43leTncv4OCS_nWVlyPg5NgGAJ4FxMwRqEEYBwRdUMXTBIhy5x9hmwpoje-J0IANur9Ae-GOIU:1oI2N7:oi_N5vvT1fRVkG3pomv34LKl2iHCkbMiUQyMUsqVl1s', '2022-08-14 06:24:17.729571');
 
 -- --------------------------------------------------------
 
@@ -333,9 +333,9 @@ CREATE TABLE `home_items` (
 --
 
 INSERT INTO `home_items` (`id`, `Product_sr_no`, `item_name`, `year_of_purchase`, `LP_NO`, `initial_price`, `issued_to`, `Depreciated_Price`, `Remarks`, `barcode`, `fund_name`) VALUES
-(1, 'ah222', 'azsedrf', '2020-11-12', 'qw213', 0, 'MR.X', 0, 'import', 'barcodes/30F12020AZ.png', 'F1'),
+(1, 'ah222', 'azsedrf', '2021-11-12', 'qw213', 0, 'MR.X', 0, 'import', 'barcodes/30F12020AZ.png', 'F2'),
 (4, 'ah213', 'azsedrf', '2020-11-12', 'qw213', 0, 'MR.X', 0, 'import', 'barcodes/30F12020AZ_Wh7ObFR.png', 'F1'),
-(5, 'dwc', 'wdwc', '2020-05-11', 'wq123', 0, 'MR.X', 0, 'multi_imports', 'barcodes/30F22020WD.png', 'F2'),
+(5, 'dwc', 'wdwc', '2022-05-11', 'wq123', 0, 'MR.X', 0, 'multi_imports', 'barcodes/30F22020WD.png', 'F2'),
 (6, 'dfw', 'dwd', '2020-05-12', 'asdc', 0, 'Mr.y', 0, 'test4', 'barcodes/30F22020DW.png', 'F2');
 
 --

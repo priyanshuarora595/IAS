@@ -19,7 +19,7 @@ from dateutil import parser
 
 
 def index(request):
-    print(request.method)
+    # print(request.method)
     if request.user.is_authenticated:
         funds=Funds.objects.all()
         form = ItemsForm()
@@ -34,7 +34,7 @@ def index(request):
 def add_item(request):
     if request.user.is_authenticated:
         if request.method=="POST":
-            print(request.POST['Product_sr_no'])
+            # print(request.POST['Product_sr_no'])
             if request.POST['Product_sr_no'] not in Items.objects.values_list('Product_sr_no',flat=True):
                 form = ItemsForm(request.POST)
                 try:
@@ -85,7 +85,7 @@ def all_entries(request):
 
 
 def filter_data(request):
-    print(request.POST)
+    # print(request.POST)
     columns=list(Items._meta.get_fields())
     form = ItemsForm()
     funds_form = FundsForm()
@@ -99,7 +99,7 @@ def filter_data(request):
             # cache.set('last_query',entries)
             request.session['last_query'] = {'filter_by':'fund_name','val':fund_name_inp}
         elif filter_by=='Year':
-            print("year====================================================")
+            # print("year====================================================")
             year_inp = request.POST['year']
             entries=Items.objects.filter(year_of_purchase__year=year_inp).values()
             request.session['last_query'] = {'filter_by':'year_of_purchase__year','val':year_inp}
@@ -127,8 +127,8 @@ def filter_data(request):
 def del_item(request):
     if request.user.is_authenticated:
         passw=request.POST['del_pass']
-        print(request.POST)
-        print(passw)
+        # print(request.POST)
+        # print(passw)
         res=check_password(passw,request.user.password)
         if res:
             item_ids= request.POST.getlist("delete_item_list")
@@ -154,7 +154,7 @@ def del_item(request):
 
 
 def edit_entry(request,it_id):
-    print(request.method)
+    # print(request.method)
     if request.method=="GET":
         item_obj = Items.objects.get(id=int(it_id))
         # it=Items.objects.get(id=it_id)
@@ -182,7 +182,7 @@ def edit_entry_submit(request):
                 if k=='fund_name':
                     setattr(item_obj,k,Funds.objects.get(fund_name=v[0]))
                 elif k=="year_of_purchase":
-                    print(v)
+                    # print(v)
                     setattr(item_obj,k,parser.parse(v[0]))
                 else:
                     setattr(item_obj,k,v[0])
@@ -242,7 +242,7 @@ def simple_upload(request):
             GFG = pd.ExcelWriter('test.xlsx')
             imported_data.to_excel(GFG,index=False)
             
-            print(imported_data)
+            # print(imported_data)
             
             
             
@@ -326,12 +326,12 @@ def export_xlsx(request):
                     '{0}'.format(filter_by): filter_val,
                 }
             query=Items.objects.filter(**kwargs)
-            print(query)
+            # print(query)
             dataset = ItemResources().export(queryset=query)
     except Exception as e:
-        print(e)
+         messages.error(request,e)
     df_output = dataset.export('df')
-    print(df_output)
+    # print(df_output)
     df_output = df_output.drop(columns=['id'],axis=1)
     df_output['barcode'] = df_output['barcode'].apply(add_media_path)
     excel_file = IO()
@@ -374,16 +374,16 @@ def export_xls(request):
                     '{0}'.format(filter_by): filter_val,
                 }
             query=Items.objects.filter(**kwargs)
-            print(query)
+            # print(query)
             dataset = ItemResources().export(queryset=query)
     except Exception as e:
-        print(e)
+        messages.error(request,e)
     df_output = dataset.export('df')
-    print(df_output)
+    # print(df_output)
     df_output = df_output.drop(columns=['id'],axis=1)
     df_output['barcode'] = df_output['barcode'].apply(add_media_path)
     excel_file = IO()
-    xlwriter = pd.ExcelWriter(excel_file, engine='xlsxwriter')
+    xlwriter = pd.ExcelWriter(excel_file, engine='xlwt')
 
     df_output.to_excel(xlwriter, 'sheetname',index=False)
     xlwriter.save()
@@ -422,12 +422,12 @@ def export_csv(request):
                     '{0}'.format(filter_by): filter_val,
                 }
             query=Items.objects.filter(**kwargs)
-            print(query)
+            # print(query)
             dataset = ItemResources().export(queryset=query)
     except Exception as e:
-        print(e)
+        messages.error(request,e)
     df_output = dataset.export('df')
-    print(df_output)
+    # print(df_output)
     df_output = df_output.drop(columns=['id'],axis=1)
     df_output['barcode'] = df_output['barcode'].apply(add_media_path)
     response = HttpResponse(content_type='text/csv')
@@ -442,9 +442,9 @@ def scan_barcode(request):
         form = ItemsForm()
         code = request.POST['mybarcode']
         code = "barcodes/"+str(code)+".png"
-        print(code)
+        # print(code)
         entries=Items.objects.filter(barcode = code).values()
-        all_entries = Items.objects.all().values()
+        # all_entries = Items.objects.all().values()
         # print('filtered entries = ',entries)
         # print('all entries = ',all_entries)
         context = {
@@ -452,6 +452,8 @@ def scan_barcode(request):
             'all_data' : entries,
             'NewEntryForm' : form,
         }
+        if len(entries)==0:
+            messages.error(request,"No Entry found!")
         return render(request,'All_Entry.html',context)
     else:
         messages.error(request,"UNAUTHENTICATED!")
