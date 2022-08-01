@@ -110,6 +110,9 @@ def filter_data(request):
             entries=Items.objects.filter(fund_name=fund_name_inp,year_of_purchase__year=year_inp).values()
             request.session['last_query'] = {'filter_by1':'fund_name','val1':fund_name_inp,'filter_by2':'year_of_purchase__year','val2':year_inp}
             
+        else:
+            entries=Items.objects.all().values()
+            
     except:
         return redirect('all_entries')
     context = {
