@@ -19,6 +19,9 @@ class ItemsForm(forms.ModelForm):
             'year_of_purchase': DateInput(),
         }
         
+        
+        fields = ['Product_sr_no','item_name','fund_name','year_of_purchase','LP_NO','initial_price','issued_to','Depreciated_Price','Remarks']
+        
 class FundsForm(forms.ModelForm):
     class Meta:
         model = Funds

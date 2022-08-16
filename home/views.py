@@ -1,5 +1,6 @@
 from django.core.cache import cache
 from django.contrib.auth.hashers import check_password
+from django.http import HttpResponseRedirect, JsonResponse
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -14,7 +15,7 @@ from pathlib import Path
 import os
 import pandas as pd
 from io import BytesIO as IO
-
+import json
 from dateutil import parser
 
 
@@ -44,7 +45,7 @@ def add_item(request):
                     messages.error(request,e)
             else:
                 messages.error(request,"Duplicate entry {}".format(request.POST['Product_sr_no']))
-    return redirect('index')
+    return redirect('all_entries')
 
 
 def del_profile(request):    
@@ -78,6 +79,25 @@ def all_entries(request):
             'funds' : funds
         }
         return render(request,'All_Entry.html',context)
+    else:
+        messages.error(request,"UNAUTHENTICATED!")
+    return redirect('index')
+
+def all_funds(request):
+    if request.user.is_authenticated:
+        columns=list(Funds._meta.get_fields())
+        # columns[0] = 'Select'
+        entries=Funds.objects.all().values()
+        funds=Funds.objects.all()
+        funds_form = FundsForm()
+        del columns[0]
+        context = {
+            'columns' : columns,
+            'all_data' : entries,
+            'funds_form':funds_form,
+            'funds' : funds
+        }
+        return render(request,'Funds.html',context)
     else:
         messages.error(request,"UNAUTHENTICATED!")
     return redirect('index')
@@ -156,17 +176,50 @@ def del_item(request):
     return redirect('index')
 
 
+
+def del_fund(request):
+    if request.user.is_authenticated:
+        passw=request.POST['del_pass']
+        # print(request.POST)
+        # print(passw)
+        res=check_password(passw,request.user.password)
+        if res:
+            item_ids= request.POST.getlist("delete_funds_list")
+            item_ids = item_ids[0].split(",")
+            try:
+                for item in item_ids:
+                    # print(item)
+                    item_obj = Funds.objects.get(fund_name=item)
+                    # barcode_img_path = Path(str(MEDIA_ROOT)+str(item_obj.barcode))
+                    # os.remove(barcode_img_path)
+                    item_obj.delete()
+                messages.success(request,"Fund deleted successfully!")
+            except Exception as e:
+                if str(e)=="Field 'id' expected a number but got ''.":
+                    er = "select atleast one item to delete"
+                    messages.error(request,er)
+                else:
+                    messages.error(request,e)
+        else:
+            messages.error(request,"Unauthorised!")    
+        return redirect('all_funds')
+    return redirect('index')
+
+
 def edit_entry(request,it_id):
     # print(request.method)
     if request.method=="GET":
-        item_obj = Items.objects.get(id=int(it_id))
-        # it=Items.objects.get(id=it_id)
-        form = ItemsForm(instance=item_obj)
-        # print(form)
-        context = {
-            'form' : form,
-            'it_id' : it_id
-        }
+        try:
+            item_obj = Items.objects.get(id=int(it_id))
+            # it=Items.objects.get(id=it_id)
+            form = ItemsForm(instance=item_obj)
+            # print(form)
+            context = {
+                'form' : form,
+                'it_id' : it_id
+            }
+        except Exception as e:
+            messages.error(request,'At least select any item')
         return render(request,'EditEntry_page.html',context)
     
     
@@ -177,20 +230,22 @@ def edit_entry_submit(request):
         res=check_password(passw,request.user.password)
         if res:
             it_id = request.POST['item_id']
-            item_obj = Items.objects.get(id=int(it_id))
-            updated_data = dict(request.POST)
-            del updated_data['csrfmiddlewaretoken']
-            del updated_data['item_id']
-            for k,v in updated_data.items():
-                if k=='fund_name':
-                    setattr(item_obj,k,Funds.objects.get(fund_name=v[0]))
-                elif k=="year_of_purchase":
-                    # print(v)
-                    setattr(item_obj,k,parser.parse(v[0]))
-                else:
-                    setattr(item_obj,k,v[0])
-                
-            # print("form ========================================== \n")
+            try:    
+                item_obj = Items.objects.get(id=int(it_id))
+                updated_data = dict(request.POST)
+                del updated_data['csrfmiddlewaretoken']
+                del updated_data['item_id']
+                for k,v in updated_data.items():
+                    if k=='fund_name':
+                        setattr(item_obj,k,Funds.objects.get(fund_name=v[0]))
+                    elif k=="year_of_purchase":
+                        # print(v)
+                        setattr(item_obj,k,parser.parse(v[0]))
+                    else:
+                        setattr(item_obj,k,v[0])
+            except Exception as e:
+                messages.error(request,'At least select any item')
+                return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
             try:
                 item_obj.save_overwrite()  
                 messages.success(request,"Item updated successfully!")
@@ -202,7 +257,67 @@ def edit_entry_submit(request):
         
         return redirect('all_entries')
     
+
+def edit_fund(request,it_id):
+    # print(request.method)
+    if request.method=="GET":
+        try:
+            if "%20" in it_id:
+                it_id.replace("%20"," ")
+            item_obj = Funds.objects.get(fund_name=it_id)
+            # it=Items.objects.get(id=it_id)
+            form = FundsForm(instance=item_obj)
+            
+            # print(form)
+            context = {
+                'form' : form,
+                'it_id' : it_id
+            }
+        except Exception as e:
+            messages.error(request,'At least select any item')
+        return render(request,'EditEntry_page.html',context)    
     
+    
+    
+def edit_fund_submit(request):
+    if request.method=="POST":
+        passw=request.POST['edit_pass']
+        res=check_password(passw,request.user.password)
+        if res:
+            it_id = request.POST['item_id']
+            try:    
+                item_obj = Funds.objects.get(fund_name=it_id)
+                updated_data = dict(request.POST)
+                del updated_data['csrfmiddlewaretoken']
+                del updated_data['item_id']
+                
+                for k,v in updated_data.items():
+                    print(k)
+                    if k=='fund_name':
+                        pass
+                    elif k=="sanction_year":
+                        # print(v)
+                        setattr(item_obj,k,parser.parse(v[0]))
+                    else:
+                        setattr(item_obj,k,v[0])
+            except Exception as e:
+                messages.error(request,e)
+                print(e)
+                return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+            try:
+                item_obj.save()  
+                messages.success(request,"Item updated successfully!")
+                
+            except Exception as e:
+                print(e)
+                messages.error(request,e)
+        else:
+            messages.error(request,"Unauthorised!")    
+        
+        return redirect('all_funds')
+    
+
+
 def add_funds(request):
     if request.user.is_authenticated:
         form = FundsForm(request.POST)
@@ -216,7 +331,13 @@ def add_funds(request):
         
     
     
-    
+def fund_date(request,it_id):
+    if "%20" in it_id:
+        it_id=it_id.replace("%20"," ")
+    item_obj = Funds.objects.get(fund_name=it_id)
+    # print(item_obj.sanction_year)
+    # print("===============================")
+    return JsonResponse({"min_date":str(item_obj.sanction_year).split('-')})
     
     
 def simple_upload(request):

@@ -12,61 +12,66 @@
 <div class="head_buttons" style="margin-top: 10px ;">
 
 
-  <button type="button" class="btn btn-primary" style="margin-left:8%;" onclick="multi_print()">
+  <!-- <button type="button" class="btn btn-primary" style="margin-left:8%;" onclick="multi_print()">
     Print
-  </button>
+  </button> -->
 
   {% if user.is_superuser %}
-  <button type="button" style="margin-left:8%;" data-toggle="modal" data-target="#DeleteItemModal" class="btn btn-primary">
+  <button type="button" style="margin-left:8%;" data-toggle="modal" data-target="#DeleteFundModal" class="btn btn-primary">
     Delete
   </button>
-  <button type="button" style="margin-left:8%;" data-toggle="modal" data-target="#NewEntryModal" class="btn btn-primary">
-    Add New Entry
-  </button>
 
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#EditEntryModal" onclick="edit()">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#EditFundModal" onclick="edit()">
       Update
     </button>
+    
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#AddFundModal">
+        Add Fund
+    </button>
   
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#UploadFileModal">
+  <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#UploadFileModal">
     import 
-  </button>
+  </button> -->
   {% endif %}
 
-  <button class="btn btn-secondary dropdown-toggle"  type="button" id="ExportdropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Export</button>
+  <!-- <button class="btn btn-secondary dropdown-toggle"  type="button" id="ExportdropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Export</button>
   <div class="dropdown-menu" aria-labelledby="ExportdropdownMenuButton">
     <a href="export_xlsx" class="dropdown-item" style="text-decoration: none;">
       Export Excel </a>
-      <a href="export_csv" class="dropdown-item" style="text-decoration: none;">
-        Export CSV</a>
-        <a href="export_xls" class="dropdown-item" style="text-decoration: none;">
-          Export xls</a>
-        </div>
-        
-        
+    <a href="export_csv" class="dropdown-item" style="text-decoration: none;">
+      Export CSV</a>
+    <a href="export_xls" class="dropdown-item" style="text-decoration: none;">
+      Export xls</a>
+        </div> -->
+    
 
-    <div id="filter" style="display: inline-block ; margin-left:5%" >
+    <!-- <div id="filter" style="display: inline-block ; margin-left:5%" >
       {% include 'filter_form.html' %}
-    </div>
+    </div> -->
 
 </div>
-
 
 
 <div class="container" style="overflow:auto; margin-left:auto;margin-right:auto  ;margin-top:3%;">
   <table class="table table-bordered">
       <thead>
           <tr>
-              <th class="table-head table-data"
+            <th class="table-head table-data"
                   style="text-align:center ;padding: 8px;border: 1px solid #dddddd;">
                   S.No.
-              </th>
-              {% for key in columns %}
+            </th>
+            {% for key in columns %}
                   <th class="table-head table-data"
                       style="text-align:center ;padding: 8px;border: 1px solid #dddddd;">
                       {{key.verbose_name}}
                   </th>
-                  {% endfor %}
+            {% endfor %}
+
+            <th class="table-head table-data"
+                  style="text-align:center ;padding: 8px;border: 1px solid #dddddd;">
+                  Select
+              </th>
+                  
                   
                 <!-- <th class="table-head table-data"
                     style="text-align:center ;padding: 8px;border: 1px solid #dddddd;">
@@ -101,30 +106,18 @@
 
               {% for x,v in user_data.items %}
                   {% if x %}
-
-                      {% if forloop.counter|isequal:1  %}
-                      <td>
-                      <input type="checkbox" name="select_item" id="{{user_data.id}}" value="{{user_data.barcode}}" >
+                    <!-- {% if forloop.counter|isequal:1  %}
+                    <td>
+                        <input type="checkbox" name="select_item" id="{{user_data.id}}" value="{{user_data.barcode}}" >
                     </td>
-                      
-
-                      {% comment %} <!-- {% elif forloop.counter|isequal:7 or forloop.counter|isequal:9 %} --> {% endcomment %}
-                      {% elif forloop.counter|isequal:7 %}
+                    {% else %}
                         <td>
-                          <center>{{"INR"|curr}}{{v}}</center>
+                        <center>{{x}}{{v}}</center>
                         </td>
-
-                        {% elif forloop.counter|isequal:11 %}
-                        <td>
-                          <div id="{{v}}">
-                          <img src="{% get_media_prefix %}{{v}}"  height="100px">
-                          </div>
-                        </td>
-                      {% else %}
-                        <td>
+                    {% endif %} -->
+                    <td>
                         <center>{{v}}</center>
                         </td>
-                      {% endif %}
                   {% else %}
                     <td>
                     <center>Not set yet</center>
@@ -132,6 +125,9 @@
                   {% endif %}
               
               {% endfor %}
+              <td>
+                <input type="checkbox" name="select_item" id="{{user_data.fund_name}}" value="{{user_data.fund_name}}" >
+            </td>
               <!-- <td tyle="text-align:center ;padding: 16px;border: 1px solid #dddddd;"><input type="checkbox"
                 name="delete_item" id="{{user_data.id}}" value="{{user_data.id}}" ></td>
               <td tyle="text-align:center ;padding: 16px;border: 1px solid #dddddd;">
@@ -151,22 +147,22 @@
   
 </div>
 
-    <!-- Delete Item Modal -->
-    <div class="modal fade" id="DeleteItemModal" tabindex="-1" role="dialog" aria-labelledby="DeleteItemModal"
+    <!-- Delete Fund Modal -->
+    <div class="modal fade" id="DeleteFundModal" tabindex="-1" role="dialog" aria-labelledby="DeleteFundModal"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="DeleteItemTitle">Delete Item</h5>
+          <h5 class="modal-title" id="DeleteFundTitle">Delete Fund</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <form action="del_item" id="del_form" method="post">
+          <form action="del_fund" id="del_form" method="post">
             {% csrf_token %}  
             <div class="form-group">
-              <p>Are you sure to delete the item? This action is irreversible. Your data will be lost and will not be recovered if you have not taken backup (export) Proceed with caution!</p>
+              <p>Are you sure to delete the fund? This action is irreversible. Your data will be lost and will not be recovered if you have not taken backup (export) Proceed with caution!</p>
               <div class="form-group">
                 <label for="id_del_pass">Password</label>
                   <input type="password" name="del_pass" value="" maxlength="100" class="form-control"  id="del_pass" placeholder="Enter your Password">
@@ -176,7 +172,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" onclick="del_items()">Delete</button>
+          <button type="button" class="btn btn-primary" onclick="del_funds()">Delete</button>
         </div>
       </div>
     </div>
@@ -184,21 +180,21 @@
 
 
 <!-- EDIT Modal -->
-<div class="modal fade" id="EditEntryModal" tabindex="-1" role="dialog" aria-labelledby="EditEntryModalLabel" aria-hidden="true">
+<div class="modal fade" id="EditFundModal" tabindex="-1" role="dialog" aria-labelledby="EditFundModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="EditEntryModalLabel">Edit Entry</h5>
+        <h5 class="modal-title" id="EditFundModalLabel">Edit Fund</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body EditEntryModalBody" id="EditEntryModalBody">
-        {% include 'EditEntry_page.html' %}
+      <div class="modal-body EditFundModalBody" id="EditFundModalBody">
+        {% include 'EditFund_page.html' %}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" onclick="update_entry()">Save changes</button>
+        <button type="button" class="btn btn-primary" onclick="update_fund()">Save changes</button>
       </div>
     </div>
 </div>
@@ -284,6 +280,7 @@
           });
       }
   });
+  
   $('#select-all-print').click(function (event) {
       if (this.checked) {
           // Iterate each checkbox
@@ -296,26 +293,26 @@
           });
       }
   });
-  var del_item_list = new Set();
+  var del_funds_list = new Set();
   var print_item_list = new Set();
   var edit_item_list = new Set();
 
   
-  function del_items()
+  function del_funds()
   {
     var markedCheckbox = document.getElementsByName('select_item');
     for (var checkbox of markedCheckbox) {  
       if (checkbox.checked)  
-        del_item_list.add(checkbox.id);  
+        del_funds_list.add(checkbox.id);  
       else
-        del_item_list.delete(checkbox.id)
+        del_funds_list.delete(checkbox.id)
     }
-    console.log(del_item_list);
+    console.log(del_funds_list);
     var del_form = document.getElementById("del_form");
     const hiddenField = document.createElement('input')
     hiddenField.type = 'hidden';
-    hiddenField.name = 'delete_item_list';
-    hiddenField.value = Array.from(del_item_list);
+    hiddenField.name = 'delete_funds_list';
+    hiddenField.value = Array.from(del_funds_list);
     del_form.appendChild(hiddenField);
     del_form.submit();
   }
@@ -353,12 +350,12 @@
     a.print();
   }
 
-  function update_entry(){
+  
+  function update_fund(){
     var update_form = document.getElementById("EditEntryForm");
+    update_form.action = "edit_fund_submit";
     update_form.submit();
   }
-
-  
 
 
   function printDiv(elem_id) {
@@ -396,41 +393,26 @@ function edit()
       console.log(value);
       modalpopup(value);
     }
-
+    
 }
 
 function modalpopup(id){
-  req_url="edit_entry/"+String(id);
-  $('#EditEntryModalBody').load(req_url);
+    req_url="edit_fund/"+String(id);
+    req_url=req_url.replace(" ","%20")
+    console.log(req_url);
+    $('#EditFundModalBody').load(req_url);
+    disable_name();
+    
 }
 
 
-        var filter_by_fund = document.getElementById('id_fund_name');
-        filter_by_fund.addEventListener('change', function handleChange(event) {
-            var filter_val = event.target.value;
-            console.log(filter_val);
-            url1 = "/fund_date/"+filter_val;
-            url1=url1.replace(" ","%20");
-            console.log(url1);
-            $.ajax({
-              type: 'GET',
-              url : url1,
-              success: function(response){
-                  console.log(response);
-                  min_date=response.min_date;
-                  year=min_date[0];
-                  month=min_date[1];
-                  date=min_date[2];
-                  min_date=year+'-'+month+'-'+date;
+function disable_name()
+    {
+        var obj = document.getElementById("id_fund_name");
+        //console.log(obj);
+        obj.disabled=true;
+        
+    }
 
-                  document.getElementById("id_year_of_purchase").min=min_date;
-                }
-                  ,
-              error: function(response){
-                  alert('An error occured')
-              }
-          });
-            
-        });
 </script>
 {% endblock body %}

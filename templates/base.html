@@ -81,9 +81,11 @@
           <h5><li><a href="/index" class="nav-link px-2 text-white">Home</a></li></h5>
           <h5><li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#ScanBarcodeModal">Scan item</a></li></h5>
           {% if user.is_superuser %}
-          <h5><li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#NewEntryModal">Add New Entry</a></li></h5>
-          <h5><li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#UploadFileModal">import</a></li></h5>
-          <h5><li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#AddFundModal">Add Fund</a></li></h5>
+          <!-- <h5><li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#NewEntryModal">Add New Entry</a></li></h5> -->
+          <!-- <h5><li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#UploadFileModal">import</a></li></h5> -->
+          <!-- <h5><li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#AddFundModal">Add Fund</a></li></h5> -->
+          <h5><li><a href="/all_entries" class="nav-link px-2 text-white">Items</a></li></h5>
+          <h5><li><a href="/all_funds" class="nav-link px-2 text-white">Funds</a></li></h5>
           {% endif %}
           <!-- <li class="nav-link px-2 text-white">Stuck Anywhere? Goto Home</li> -->
         </ul>
@@ -203,7 +205,7 @@
   </div>
 </div>
 
-<!-- Modal -->
+<!--New Entry Modal -->
 <div class="modal fade" id="NewEntryModal" tabindex="-1" role="dialog" aria-labelledby="NewEntryModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -227,6 +229,30 @@
   </div>
 </div>
 
+
+<!--del Fund Modal -->
+<div class="modal fade" id="DelFundModal" tabindex="-1" role="dialog" aria-labelledby="DelFundModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="DelFundModalLabel">Delete a Fund</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <form action="add_item" method="post" id="DelFundForm" novalidate>
+              {% csrf_token %}
+              {% include 'DelFund.html' %}
+          </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="SubmitForm()">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
   

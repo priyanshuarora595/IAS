@@ -35,7 +35,7 @@ class Items(models.Model):
     LP_NO = models.CharField(verbose_name="LP Number",max_length=5,blank=False)
     initial_price = models.FloatField(verbose_name="Initial Price", default=0)
     issued_to = models.CharField(verbose_name="Issued To",max_length=100)
-    Depreciated_Price = models.FloatField(verbose_name="Depreciated Price",default=0)
+    Depreciated_Price = models.CharField(verbose_name="Depreciated Price",max_length=30,blank=True)
     Remarks = models.TextField(verbose_name="Remarks",blank=True)
     barcode = models.ImageField(upload_to='barcodes/', blank=True,default="0")
     
