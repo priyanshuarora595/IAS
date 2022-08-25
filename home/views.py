@@ -39,6 +39,24 @@ def add_item(request):
             if request.POST['Product_sr_no'] not in Items.objects.values_list('Product_sr_no',flat=True):
                 form = ItemsForm(request.POST)
                 try:
+                    fund_name_inp = request.POST['fund_name']
+                    fund_obj = Funds.objects.get(fund_name=fund_name_inp)
+                    price=int(request.POST['initial_price'])
+                    bal=fund_obj.balance
+                    
+                    if price<=bal:
+                        
+                        setattr(fund_obj,'balance',bal-price)
+                        fund_obj.save()
+                    else:
+                        messages.error("not sufficient balance in the funds!")
+                        return redirect("all_entries")
+                    # print("fund new price = ",fund_obj.balance)
+                    
+                except Exception as e:
+                    # print(e)
+                    return redirect('all_entries')
+                try:
                     form.save()
                     messages.success(request,"New item added successfully!")
                 except Exception as e:
