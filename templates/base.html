@@ -79,11 +79,11 @@
           "
         >
           <h5><li><a href="/index" class="nav-link px-2 text-white">Home</a></li></h5>
+          {% if user.is_authenticated %}
           <h5><li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#ScanBarcodeModal">Scan item</a></li></h5>
+          {% endif %}
           {% if user.is_superuser %}
-          <!-- <h5><li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#NewEntryModal">Add New Entry</a></li></h5> -->
-          <!-- <h5><li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#UploadFileModal">import</a></li></h5> -->
-          <!-- <h5><li><a href="" class="nav-link px-2 text-white" data-toggle="modal" data-target="#AddFundModal">Add Fund</a></li></h5> -->
+          
           <h5><li><a href="/all_entries" class="nav-link px-2 text-white">Items</a></li></h5>
           <h5><li><a href="/all_funds" class="nav-link px-2 text-white">Funds</a></li></h5>
           {% endif %}
