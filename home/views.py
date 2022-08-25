@@ -478,8 +478,8 @@ def export_xlsx(request):
     df_output['barcode'] = df_output['barcode'].apply(add_media_path)
     excel_file = IO()
     xlwriter = pd.ExcelWriter(excel_file, engine='xlsxwriter')
-
     df_output.to_excel(xlwriter, 'sheetname',index=False)
+    
     xlwriter.save()
     xlwriter.close()
     
