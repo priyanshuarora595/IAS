@@ -254,8 +254,9 @@
   </div>
 </div>
 
+
+
 <script>
-  
 
   function SubmitForm()
   {
@@ -296,6 +297,36 @@
       });
 
       }
+
+
+
+      var filter_by_fund = document.getElementById('id_fund_name');
+        filter_by_fund.addEventListener('change', function handleChange(event) {
+            var filter_val = event.target.value;
+            console.log(filter_val);
+            url1 = "/fund_date/"+filter_val;
+            url1=url1.replace(" ","%20");
+            console.log(url1);
+            $.ajax({
+              type: 'GET',
+              url : url1,
+              success: function(response){
+                  console.log(response);
+                  min_date=response.min_date;
+                  year=min_date[0];
+                  month=min_date[1];
+                  date=min_date[2];
+                  min_date=year+'-'+month+'-'+date;
+
+                  document.getElementById("id_year_of_purchase").min=min_date;
+                }
+                  ,
+              error: function(response){
+                  alert('An error occured')
+              }
+          });
+            
+        });
     </script>
   </body>
 
