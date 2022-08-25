@@ -1,0 +1,1 @@
+web: gunicorn IAS_Project.wsgi
