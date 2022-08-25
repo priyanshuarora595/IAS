@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 31, 2022 at 08:39 AM
+-- Generation Time: Aug 25, 2022 at 09:36 AM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.2
 
@@ -143,7 +143,7 @@ CREATE TABLE `auth_user` (
 --
 
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
-(5, 'pbkdf2_sha256$260000$Va0sdR40E9lNuu1cCwFxUM$5D5vzRkDL2vVndp2EyvsNm/01B0hHIbGUlfB2GiuEvw=', '2022-07-31 06:24:17.721138', 1, 'admin', '', '', '', 1, 1, '2022-07-25 07:16:53.153173'),
+(5, 'pbkdf2_sha256$260000$Va0sdR40E9lNuu1cCwFxUM$5D5vzRkDL2vVndp2EyvsNm/01B0hHIbGUlfB2GiuEvw=', '2022-08-25 06:59:05.398811', 1, 'admin', '', '', '', 1, 1, '2022-07-25 07:16:53.153173'),
 (6, 'pbkdf2_sha256$260000$u5pt1o54aaXANIXJQZtHGI$DnxSisX9iTf938m/UzTnZ2y572isWg2iiOjZjKupE3Q=', '2022-07-30 21:28:41.708649', 0, 'officer1', '', '', 'off1@test.org', 0, 1, '2022-07-25 10:56:40.902797');
 
 -- --------------------------------------------------------
@@ -259,7 +259,8 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 (17, 'auth', '0012_alter_user_first_name_max_length', '2022-07-25 05:08:08.259582'),
 (18, 'sessions', '0001_initial', '2022-07-25 05:08:08.307631'),
 (19, 'accounts', '0001_initial', '2022-07-25 06:17:54.212145'),
-(31, 'home', '0001_initial', '2022-07-30 06:40:50.262610');
+(31, 'home', '0001_initial', '2022-07-30 06:40:50.262610'),
+(32, 'home', '0002_alter_items_depreciated_price', '2022-08-02 05:21:31.866184');
 
 -- --------------------------------------------------------
 
@@ -278,15 +279,19 @@ CREATE TABLE `django_session` (
 --
 
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
+('23hjglge5tfzz2w7zitjiujysvk5om86', '.eJxVjDsOwjAQBe_iGlnZ-BdT0nOGaL27xgFkS_lUiLtDpBTQvpl5LzXitpZxW2QeJ1Zn5dTpd0tID6k74DvWW9PU6jpPSe-KPuiir43leTncv4OCS_nWVlyPg5NgGAJ4FxMwRqEEYBwRdUMXTBIhy5x9hmwpoje-J0IANur9Ae-GOIU:1oO3UG:ft2zOAxrxvFNuDYGkP8NmNZujmPopsCdg6mzRz4Ue2A', '2022-08-30 20:48:32.581511'),
 ('dm7ffa4jdnlmsneasqxrgqlx7cni0676', '.eJxVjDsOwjAQBe_iGlnxP6akzxmsXduLA8iW4qRC3J1ESgHtm5n3ZgG2tYSt5yXMiV2ZZZffDSE-cz1AekC9Nx5bXZcZ-aHwk3Y-tZRft9P9OyjQy15nENLgaBTRMHoyCkwWhDGSl16lwekowROhdlZTwqiVFFI7snanZNnnC_tqOEA:1oHAyN:2cDopfV3uO10En8BWJny15IzDc5pyhYlIX8OzoyZhNI', '2022-08-11 21:23:11.980409'),
 ('frv6oldwnf0i6swkzyc4dbx16pde649e', '.eJxVjDsOwjAQBe_iGlnxP6akzxmsXduLA8iW4qRC3J1ESgHtm5n3ZgG2tYSt5yXMiV2ZZZffDSE-cz1AekC9Nx5bXZcZ-aHwk3Y-tZRft9P9OyjQy15nENLgaBTRMHoyCkwWhDGSl16lwekowROhdlZTwqiVFFI7snanZNnnC_tqOEA:1oGR63:s3t_6pY0nbiqXuIegDxFeDHTsNEOgoqfX5eFTO9j7uk', '2022-08-09 20:24:03.035894'),
+('hn3rsj7v0j4z3wxyzc50wfz20dlhjctg', '.eJxVjDsOwjAQBe_iGlnZ-BdT0nOGaL27xgFkS_lUiLtDpBTQvpl5LzXitpZxW2QeJ1Zn5dTpd0tID6k74DvWW9PU6jpPSe-KPuiir43leTncv4OCS_nWVlyPg5NgGAJ4FxMwRqEEYBwRdUMXTBIhy5x9hmwpoje-J0IANur9Ae-GOIU:1oO1U4:-g27uLzqBTgCtBUhpphDGjwZr81sEbNG9XxDaq9aSFo', '2022-08-30 18:40:12.011164'),
 ('i0t7z1kgc2q6kbl5m80ci0knhega0e2y', '.eJxVjDsOwjAQBe_iGlnxP6akzxmsXduLA8iW4qRC3J1ESgHtm5n3ZgG2tYSt5yXMiV2ZZZffDSE-cz1AekC9Nx5bXZcZ-aHwk3Y-tZRft9P9OyjQy15nENLgaBTRMHoyCkwWhDGSl16lwekowROhdlZTwqiVFFI7snanZNnnC_tqOEA:1oH8MD:FKcu2wj7UD7qPrE9hY6uYdnXPkA4VnVmh_YyBLGvXmc', '2022-08-11 18:35:37.299117'),
 ('ijmzm3k87mcxb9fgijp7lonh9vzd9d4m', '.eJxVjDsOwjAQBe_iGlnxP6akzxmsXduLA8iW4qRC3J1ESgHtm5n3ZgG2tYSt5yXMiV2ZZZffDSE-cz1AekC9Nx5bXZcZ-aHwk3Y-tZRft9P9OyjQy15nENLgaBTRMHoyCkwWhDGSl16lwekowROhdlZTwqiVFFI7snanZNnnC_tqOEA:1oG4AF:5uUr6TIp5bvUPWHFnbQ6c77tJiLkuxJBleJAsvLA7D8', '2022-08-08 19:54:51.549138'),
+('pjvpzc2och78bptctpoagr4egso5w7ee', '.eJxVjDsOwjAQBe_iGlnZ-BdT0nOGaL27xgFkS_lUiLtDpBTQvpl5LzXitpZxW2QeJ1Zn5dTpd0tID6k74DvWW9PU6jpPSe-KPuiir43leTncv4OCS_nWVlyPg5NgGAJ4FxMwRqEEYBwRdUMXTBIhy5x9hmwpoje-J0IANur9Ae-GOIU:1oO3YG:SuPupC_0Eu2pMJAoHb5Pw1lRFF3IN7psy8dsTiDC6xQ', '2022-08-30 20:52:40.669380'),
 ('pqunz6f68h7xekbnkd2x40azfr5cch5r', '.eJxVjDsOwjAQBe_iGlnZ-BdT0nOGaL27xgFkS_lUiLtDpBTQvpl5LzXitpZxW2QeJ1Zn5dTpd0tID6k74DvWW9PU6jpPSe-KPuiir43leTncv4OCS_nWVlyPg5NgGAJ4FxMwRqEEYBwRdUMXTBIhy5x9hmwpoje-J0IANur9Ae-GOIU:1oHY8i:0opTR4HciiVH_Hue8J1jz-Os9uJiALyvbBzegjdRVfU', '2022-08-12 22:07:24.337214'),
+('q7ayo1nwqmwwn2osqii95l369lx5igd8', '.eJxVjDsOwjAQBe_iGlnZ-BdT0nOGaL27xgFkS_lUiLtDpBTQvpl5LzXitpZxW2QeJ1Zn5dTpd0tID6k74DvWW9PU6jpPSe-KPuiir43leTncv4OCS_nWVlyPg5NgGAJ4FxMwRqEEYBwRdUMXTBIhy5x9hmwpoje-J0IANur9Ae-GOIU:1oR6pV:v-NyejYHP_C7qd36HPo-SG1q8cwpznaUYVYGyJjdRRE', '2022-09-08 06:59:05.404808'),
 ('w1lcevwmlrauplosruze8jh2hghkh1x6', 'e30:1oFrOH:Kl4Hu2MmLvIXzsU05OVfsQ-QBXfT63OloxLYGNpjpyw', '2022-08-08 06:16:29.832958'),
 ('ycskpplzt7vw7vbld07lq247prx8gyow', '.eJxVjDsOwjAQBe_iGlnxP6akzxmsXduLA8iW4qRC3J1ESgHtm5n3ZgG2tYSt5yXMiV2ZZZffDSE-cz1AekC9Nx5bXZcZ-aHwk3Y-tZRft9P9OyjQy15nENLgaBTRMHoyCkwWhDGSl16lwekowROhdlZTwqiVFFI7snanZNnnC_tqOEA:1oFvlR:o9B1VkktVPbbGWl4dlN00_pccKkz6FjHZ9OUV46E5_s', '2022-08-08 10:56:41.358654'),
 ('z3k21mzn4ulzk98p4zylz1mtbmgll5gp', '.eJxVjDsOwjAQBe_iGlnZ-BdT0nOGaL27xgFkS_lUiLtDpBTQvpl5LzXitpZxW2QeJ1Zn5dTpd0tID6k74DvWW9PU6jpPSe-KPuiir43leTncv4OCS_nWVlyPg5NgGAJ4FxMwRqEEYBwRdUMXTBIhy5x9hmwpoje-J0IANur9Ae-GOIU:1oHOFt:8Rk2HBbgENEPCsEg1bW-xzjR0jtcpYgTt5yL0xqmfpU', '2022-08-12 11:34:09.906070'),
-('z463afrfyj24mkubk9mtwc9ikkhqozp3', '.eJxVjDsOwjAQBe_iGlnZ-BdT0nOGaL27xgFkS_lUiLtDpBTQvpl5LzXitpZxW2QeJ1Zn5dTpd0tID6k74DvWW9PU6jpPSe-KPuiir43leTncv4OCS_nWVlyPg5NgGAJ4FxMwRqEEYBwRdUMXTBIhy5x9hmwpoje-J0IANur9Ae-GOIU:1oI2N7:oi_N5vvT1fRVkG3pomv34LKl2iHCkbMiUQyMUsqVl1s', '2022-08-14 06:24:17.729571');
+('z463afrfyj24mkubk9mtwc9ikkhqozp3', '.eJxVjs0OgjAQhN-lZ0Mopfx49O4zNNvdraC1RFpMDOHdLQkHPc7MN5NZhYElDWaJPJuRxFlocfr1LOCDwx7QHcJtKnAKaR5tsSPFkcbiOhH7y8H-DQwQh9yuWVfQaW4VyVY2ureSoGe0UiqNiGVXtsoyY03kGiddjT00qqkQQUpSedRDTOa18PwR51W40af9XxbCLYFMgCdn6g0-O5E9YxLb9gXgsEtQ:1oIjzY:4L3c1m0eOFeEsDPLmGrb1bkKOIDEno25strJBGXHKz4', '2022-08-16 04:58:52.649664');
 
 -- --------------------------------------------------------
 
@@ -305,8 +310,10 @@ CREATE TABLE `home_funds` (
 --
 
 INSERT INTO `home_funds` (`fund_name`, `sanction_year`, `balance`) VALUES
-('F1', '2022-07-30', 100000000),
-('F2', '2022-07-30', 200000);
+('F3', '2022-07-30', 200000),
+('IT Fund', '2022-07-14', 410000),
+('Maintenance', '2022-01-06', 800000),
+('Transport Fund', '2022-01-07', 500000);
 
 -- --------------------------------------------------------
 
@@ -322,7 +329,7 @@ CREATE TABLE `home_items` (
   `LP_NO` varchar(5) NOT NULL,
   `initial_price` double NOT NULL,
   `issued_to` varchar(100) NOT NULL,
-  `Depreciated_Price` double NOT NULL,
+  `Depreciated_Price` varchar(30) NOT NULL,
   `Remarks` longtext NOT NULL,
   `barcode` varchar(100) NOT NULL,
   `fund_name` varchar(30) NOT NULL
@@ -333,10 +340,10 @@ CREATE TABLE `home_items` (
 --
 
 INSERT INTO `home_items` (`id`, `Product_sr_no`, `item_name`, `year_of_purchase`, `LP_NO`, `initial_price`, `issued_to`, `Depreciated_Price`, `Remarks`, `barcode`, `fund_name`) VALUES
-(1, 'ah222', 'azsedrf', '2021-11-12', 'qw213', 0, 'MR.X', 0, 'import', 'barcodes/30F12020AZ.png', 'F2'),
-(4, 'ah213', 'azsedrf', '2020-11-12', 'qw213', 0, 'MR.X', 0, 'import', 'barcodes/30F12020AZ_Wh7ObFR.png', 'F1'),
-(5, 'dwc', 'wdwc', '2022-05-11', 'wq123', 0, 'MR.X', 0, 'multi_imports', 'barcodes/30F22020WD.png', 'F2'),
-(6, 'dfw', 'dwd', '2020-05-12', 'asdc', 0, 'Mr.y', 0, 'test4', 'barcodes/30F22020DW.png', 'F2');
+(8, 'CSINTEL556576TW', 'Intel Computer', '2022-06-08', 'LP001', 45000, 'IT Department', '10', '', 'barcodes/30IT2022INTW.png', 'IT Fund'),
+(9, 'RJ27CH4172', 'SUV CAR', '2022-06-04', 'LP002', 1500000, 'Transport Department', '8', '', 'barcodes/30TR2022SU72.png', 'Transport Fund'),
+(10, '176APPLEMAC761', 'MAC Book 16', '2022-04-07', 'LP001', 65000, 'Aaditya Maheshwari', '9', '', 'barcodes/30IT2022MA61.png', 'IT Fund'),
+(11, 'RJ27UA4479', 'INNOVA', '2022-05-05', 'LP002', 1200000, 'Transport Department', '10', '', 'barcodes/30TR2022IN79.png', 'Transport Fund');
 
 --
 -- Indexes for dumped tables
@@ -498,13 +505,13 @@ ALTER TABLE `django_content_type`
 -- AUTO_INCREMENT for table `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `home_items`
 --
 ALTER TABLE `home_items`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Constraints for dumped tables
